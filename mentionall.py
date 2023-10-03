@@ -317,29 +317,6 @@ async def cancel(event):
   tekli_calisan.remove(event.chat_id)
 	
 
-@client.on(events.NewMessage(pattern='/eros'))
-async def eros_oku(event):
-    users = []
-    async for user in client.iter_participants(event.chat_id):
-        if not user.bot and not user.deleted and not user.is_self:
-            users.append(user)
-
-    if len(users) < 2:
-        return
-    
-    first_user, second_user = random.sample(users, 2)
-    first_user_md_mention = f'**[{first_user.first_name}](tg://user?id={first_user.id})**'
-    second_user_md_mention = f'**[{second_user.first_name}](tg://user?id={second_user.id})**'
-    
-    response = (
-        f"**Eros'un oku atıldı.💘**\n**Aşıklar:**\n\n"
-        f"{first_user_md_mention} 💞 {second_user_md_mention} \n`Uyumluluk oranı: %{random.randint(0, 100)}`"
-    )
-    
-    await event.respond(response, parse_mode="Markdown")
-client.run_until_disconnected()
-
-
 
 @client.on(events.NewMessage(pattern="^/admins ?(.*)"))
 async def mentionall(tagadmin):
@@ -361,7 +338,7 @@ async def mentionall(tagadmin):
 	
 
 	
-@client.on(events.NewMessage(pattern='/alive'))
+@client.on(events.NewMessage(pattern='/durum'))
 async def handler(event):
 	
     await event.reply('👨‍💻 Hey! Aktifim! Bilgilerim Aşşağıda.\n\n║▻  ⚙️ Versiyon [ V1 ]\n║▻  💠 Python Versiyon : 4.0.0\n║▻  💻 Telethon Versiyon : 2..0')
