@@ -276,7 +276,7 @@ async def eros(event):
         or second_user.id == 5375589992 or second_user.id == 5576614947):
         await event.respond("**💌 Eros'un oku atıldı.\n• Aşıklar  :\n\n[ ✍🏻 ](tg://user?id=5053767281) ❤️ [ . ](tg://user?id=5533927130)**")
     else:
-        await event.respond(f"**💌 Eros'un oku atıldı.\n• Aşıklar  :\n\n{first_user.mention} ❣️ {second_user.mention}**")
+        await event.respond(f"**💌 Eros'un oku atıldı.\n• Aşıklar  :\n\n{first_user.first_name} {first_user.last_name} ❣️ {second_user.first_name} {second_user.last_name}**")
 
 
 @client.on(events.NewMessage(pattern='/slap'))
