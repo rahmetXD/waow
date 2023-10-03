@@ -41,7 +41,7 @@ rxyzdev_initT = {}
 
 @client.on(events.NewMessage(pattern="^/start$"))
 async def start(event):
-  await event.reply("👋🏻 ᴍᴇʀʜᴀʙᴀ, ʙᴇɴ ᴀʜʀɪ! ʙᴀᴢı ᴋᴜʟʟᴀɴışʟı ᴏ̈ᴢᴇʟʟɪᴋʟᴇʀᴇ sᴀʜɪᴘ ᴛᴇʟᴇɢʀᴀᴍ ᴜ̈ʏᴇ ᴇᴛɪᴋᴇᴛʟᴇᴍᴇ ʙᴏᴛᴜʏᴜᴍ.\n📚 ᴋᴏᴍᴜᴛʟᴀʀı ɢᴏ̈ʀᴍᴇᴋ ɪ̇ᴄ̧ɪɴ /help, ᴋᴏᴍᴜᴛᴜɴᴜ ᴋᴜʟʟᴀɴᴀ ʙɪʟɪʀsɪɴɪᴢ.",
+  await event.reply("👋🏻 ᴍᴇʀʜᴀʙᴀ, ʙᴇɴ ᴀʜʀɪ! ʙᴀᴢı ᴋᴜʟʟᴀɴışʟı ᴏ̈ᴢᴇʟʟɪᴋʟᴇʀᴇ sᴀʜɪᴘ ᴛᴇʟᴇɢʀᴀᴍ ᴜ̈ʏᴇ ᴇᴛɪᴋᴇᴛʟᴇᴍᴇ ʙᴏᴛᴜʏᴜᴍ.\n\n📚 ᴋᴏᴍᴜᴛʟᴀʀı ɢᴏ̈ʀᴍᴇᴋ ɪ̇ᴄ̧ɪɴ /help, ᴋᴏᴍᴜᴛᴜɴᴜ ᴋᴜʟʟᴀɴᴀ ʙɪʟɪʀsɪɴɪᴢ.",
                     buttons=(                  
 		                      
                       [Button.url('➕ɢʀᴜʙᴀ ᴇᴋʟᴇ➕', f"https://t.me/{bot_username}?startgroup=a")],
@@ -246,11 +246,38 @@ async def mentionall(event):
         usrnum = 0
         usrtxt = ""
 
+
 @client.on(events.NewMessage(pattern='^(?i)/cancel'))
 async def cancel(event):
   global anlik_calisan
   anlik_calisan.remove(event.chat_id)
 	
+
+@client.on(events.NewMessage(pattern="^/eros$"))
+async def eros(event):
+    # Sadece grup ve kanallarda çalıştır
+    if event.is_private:
+        return
+
+    users = await client.get_participants(event.chat_id, limit=200)
+    
+    users_list = []
+    for user in users:
+        if user.bot or user.deleted:
+            pass
+        else:
+            users_list.append(user)
+    count = len(users_list)
+    
+    first_user = users_list[random.randint(0, count - 1)]
+    second_user = users_list[random.randint(0, count - 1)]
+    
+    if (first_user.id == 1550788256 or first_user.id == 5576614947
+        or second_user.id == 5375589992 or second_user.id == 5576614947):
+        await event.respond("**💌 Eros'un oku atıldı.\n• Aşıklar  :\n\n[ ✍🏻 ](tg://user?id=5053767281) ❤️ [ . ](tg://user?id=5533927130)**")
+    else:
+        await event.respond(f"**💌 Eros'un oku atıldı.\n• Aşıklar  :\n\n{first_user.mention} ❣️ {second_user.mention}**")
+
 
 @client.on(events.NewMessage(pattern='/slap'))
 async def slap(event):
@@ -269,13 +296,19 @@ async def slap(event):
                 f"{user_name}'nin üstüne su döktü!",
                 f"{user_name}'yi dondurdu!",
                 f"{user_name}'nin üzerine pasta fırlattı!",
+                f"{user_name}'yi Zencilere Sattı!",
+                f"{user_name}'yi Turşu Kavonozuna Soktu!",
+                f"{user_name}'nin Üzerine Buz Dolabı Attı!",
+                f"{user_name}'nin Kafasını Duvara Sürterek Yaktı!",
+                f"{user_name}'yi Ormana Kaçırdı!",
+                f"{user_name}'yi Banyoda Sukast Etti!",
             ]
             slap_phrase = random.choice(slap_phrases)
             await event.respond(f"{event.sender.first_name} {slap_phrase}")
         else:
-            await event.respond("Üzgünüm, kullanıcıyı bulamıyorum.")
+            await event.respond("Üzgünüm, kullanıcıyı bulamıyorum!")
     else:
-        await event.respond("Bu komutu kullanabilmek için bir mesaja yanıt vermelisiniz.")
+        await event.respond("Bu komutu kullanabilmek için bir mesaja yanıt vermelisiniz!")
 
 
 @client.on(events.NewMessage(pattern="^/tektag ?(.*)"))
