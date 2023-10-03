@@ -185,64 +185,6 @@ async def mentionall(event):
         usrtxt = ""
 
 
-@client.on(events.NewMessage(pattern="^/stag ?(.*)"))
-async def nick(event):
-  global anlik_calisan
-   if event.is_private:
-    return await event.respond("Bu komutu gruplar ve kanallar için geçerli!")
-  
-  admins = []
-  async for admin in client.iter_participants(event.chat_id, filter=ChannelParticipantsAdmins):
-    admins.append(admin.id)
-  if not event.sender_id in admins:
-    return await event.respond("__Yalnızca yöneticiler hepsinden bahsedebilir!__")
-  
-  if event.pattern_match.group(1):
-    mode = "text_on_cmd"
-    msg = event.pattern_match.group(1)
-  elif event.reply_to_msg_id:
-    mode = "text_on_reply"
-    msg = event.reply_to_msg_id
-     if msg == None:
-        return await event.respond("Önceki mesajları etiket işlemi için kullanamıyorum.")
-  elif event.pattern_match.group(1) and event.reply_to_msg_id:
-    return await event.respond("Başlamak için mesaj yazmalısın!")
-  else:
-    return await event.respond("İşleme başlamam için mesaj yazmalısın!")
-  
-  if mode == "text_on_cmd":
-    anlik_calisan.append(event.chat_id)
-    usrnum = 0
-    usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
-      usrnum += 1
-      usrtxt += f"[{random.choice(emj)}](tg://user?id={usr.id}) "
-      if event.chat_id not in anlik_calisan:
-        await event.respond("İşlem Durduruldu!")
-        return
-      if usrnum == 5:
-        await client.send_message(event.chat_id, f"{usrtxt}\n\n{msg}")
-        await asyncio.sleep(2)
-        usrnum = 0
-        usrtxt = ""
-        
-  
-  if mode == "text_on_reply":
-    anlik_calisan.append(event.chat_id)
- 
-    usrnum = 0
-    usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
-      usrnum += 1
-      usrtxt += f"[{random.choice(emj)}](tg://user?id={usr.id}) "
-      if event.chat_id not in anlik_calisan:
-        await event.respond("İşlem Durduruldu!")
-        return
-      if usrnum == 5:
-        await client.send_message(event.chat_id, usrtxt, reply_to=msg)
-        await asyncio.sleep(2)
-        usrnum = 0
-        usrtxt = ""
 
 
 @client.on(events.NewMessage(pattern="^/tag ?(.*)"))
