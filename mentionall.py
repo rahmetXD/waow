@@ -257,8 +257,9 @@ async def slap(event):
     if event.is_private:
         return await event.respond("Bu komut gruplar ve kanallar için geçerlidir!")
 
-    if event.is_reply:
-        user = await event.get_reply_message().sender
+    if event.reply_to_msg_id:
+        reply_message = await event.get_reply_message()
+        user = reply_message.sender
         if user:
             user_name = user.first_name
             slap_phrases = [
