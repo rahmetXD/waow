@@ -40,7 +40,7 @@ rxyzdev_initT = {}
 
 @client.on(events.NewMessage(pattern="^/start$"))
 async def start(event):
-  await event.reply("👋🏻 ᴍᴇʀʜᴀʙᴀ, ʙᴇɴ ᴀʜʀɪ! ʙᴀᴢı ᴋᴜʟʟᴀɴışʟı ᴏ̈ᴢᴇʟʟɪᴋʟᴇʀᴇ sᴀʜɪᴘ ᴛᴇʟᴇɢʀᴀᴍ ᴜ̈ʏᴇ ᴇᴛɪᴋᴇᴛʟᴇᴍᴇ ʙᴏᴛᴜʏᴜᴍ.\n\n📚 ᴋᴏᴍᴜᴛʟᴀʀı ɢᴏ̈ʀᴍᴇᴋ ɪ̇ᴄ̧ɪɴ /help ᴋᴏᴍᴜᴛᴜɴᴜ ᴋᴜʟʟᴀɴᴀ ʙɪʟɪʀsɪɴɪᴢ..",
+  await event.reply("👋🏻 ᴍᴇʀʜᴀʙᴀ, ʙᴇɴ ᴀʜʀɪ! ʙᴀᴢı ᴋᴜʟʟᴀɴışʟı ᴏ̈ᴢᴇʟʟɪᴋʟᴇʀᴇ sᴀʜɪᴘ ᴛᴇʟᴇɢʀᴀᴍ ᴜ̈ʏᴇ ᴇᴛɪᴋᴇᴛʟᴇᴍᴇ ʙᴏᴛᴜʏᴜᴍ.\n\📚 ᴋᴏᴍᴜᴛʟᴀʀı ɢᴏ̈ʀᴍᴇᴋ ɪ̇ᴄ̧ɪɴ /help ᴋᴏᴍᴜᴛᴜɴᴜ ᴋᴜʟʟᴀɴᴀ ʙɪʟɪʀsɪɴɪᴢ.",
                     buttons=(                  
 		                      
                       [Button.url('➕ɢʀᴜʙᴀ ᴇᴋʟᴇ➕', f"https://t.me/{bot_username}?startgroup=a")],
@@ -175,11 +175,7 @@ async def mentionall(event):
       usrnum += 1
       usrtxt += f"[{random.choice(emoji)}](tg://user?id={usr.id}) "
       if event.chat_id not in anlik_calisan:
-        await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!", buttons=(
-                      [
-                      Button.url('📣 ʀᴇsᴍɪ ᴋᴀɴᴀʟ 📣 ', f'https://t.me/{GROUP_SUPPORT}')
-                      ]
-                    ,)
+        await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
         return
       if usrnum == 5:
         await client.send_message(event.chat_id, usrtxt, reply_to=msg)
@@ -223,11 +219,7 @@ async def mentionall(event):
       usrnum += 1
       usrtxt += f"👥 - [{usr.first_name}](tg://user?id={usr.id}) \n"
       if event.chat_id not in anlik_calisan:
-        await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!", buttons=(
-                      [
-                      Button.url('📣 ʀᴇsᴍɪ ᴋᴀɴᴀʟ 📣 ', f'https://t.me/{GROUP_SUPPORT}')
-                      ]
-                    ,)
+        await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
         return
       if usrnum == 5:
         await client.send_message(event.chat_id, f"{usrtxt}\n\n{msg}")
