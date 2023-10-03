@@ -40,12 +40,12 @@ rxyzdev_initT = {}
 
 @client.on(events.NewMessage(pattern="^/start$"))
 async def start(event):
-  await event.reply("👋🏻Merhaba, Ben Ahri! Bazı Kullanışlı Özelliklere Sahip Telegram Üye Etiketleme Botuyum.\n\n📚Komutları Görmek İçin /help Komutunu Kullana Bilirsiniz.",
+  await event.reply("👋🏻 Merhaba, Ben Ahri! Bazı Kullanışlı Özelliklere Sahip Telegram Üye Etiketleme Botuyum.\n\n📚 Komutları Görmek İçin /help Komutunu Kullana Bilirsiniz.",
                     buttons=(                  
 		                      
-                      [Button.url('➕ Beni Gruba Ekle ➕', f"https://t.me/{bot_username}?startgroup=a")],
-                      [Button.url('📢 Destek', f"https://t.me/{support}")],
-                      [Button.url('👨‍💻 Owner', 'https://t.me/rahmetiNC')],
+                      [Button.url('➕ɢʀᴜʙᴀ ᴇᴋʟᴇ➕', f"https://t.me/{bot_username}?startgroup=a")],
+                      [Button.url('📣ᴅᴇsᴛᴇᴋ📣', f"https://t.me/{support}")],
+                      [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')],
 		                  
                     ),
                     link_preview=False
@@ -53,13 +53,13 @@ async def start(event):
 
 @client.on(events.NewMessage(pattern="^/help$"))
 async def help(event):
-  helptext = "⚙️ Merhaba, İşte Komutlarım ⚙️\n\n » /tag - 5 Kişilik Etiket Oluşturur.\n » /etag - Emoji İle Etiket Atar.\n » /tektag - Üyeleri Teker Teker Etiketler.\n » /btag - Bayraklı Şekilde Üyeleri Etiketler."
+  helptext = "⚙️ Merhaba, İşte Komutlarım ⚙️\n\n » /tag \n- 5 Kişilik Etiket Oluşturur.\n » /etag \n- Emoji İle Etiket Atar.\n » /tektag \n- Üyeleri Teker Teker Etiketler.\n » /btag \n- Bayraklı Şekilde Üyeleri Etiketler."
   await event.reply(helptext,
                     buttons=(
                       
-                     [Button.url('➕ Beni Gruba Ekle ➕', f"https://t.me/{bot_username}?startgroup=a")],
-                      [Button.url('📢 Destek', f"https://t.me/{support}")],
-                      [Button.url('👨‍💻 Owner', 'https://t.me/rahmetiNC')],
+                      [Button.url('➕ɢʀᴜʙᴀ ᴇᴋʟᴇ➕', f"https://t.me/{bot_username}?startgroup=a")],
+                      [Button.url('📣ᴅᴇsᴛᴇᴋ📣', f"https://t.me/{support}")],
+                      [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')],
                     ),
                     link_preview=False
                    )
