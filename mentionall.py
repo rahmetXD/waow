@@ -158,7 +158,7 @@ async def mentionall(event):
       usrnum += 1
       usrtxt += f"[{random.choice(emoji)}](tg://user?id={usr.id}) "
       if event.chat_id not in anlik_calisan:
-       await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!", buttons=[Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')])
+       await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
         return
       if usrnum == 5:
         await client.send_message(event.chat_id, f"{usrtxt}\n\n{msg}")
