@@ -221,7 +221,7 @@ async def mentionall(event):
        await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
        return
       if usrnum == 1:
-        await client.send_message(event.chat_id, f"{usrtxt}\n\n{msg}")
+        await client.send_message(event.chat_id, f"{usrtxt} {msg}")
         await asyncio.sleep(2)
         usrnum = 0
         usrtxt = ""
