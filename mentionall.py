@@ -252,6 +252,31 @@ async def cancel(event):
   anlik_calisan.remove(event.chat_id)
 	
 
+@client.on(events.NewMessage(pattern='/slap'))
+async def slap(event):
+    if event.is_private:
+        return await event.respond("Bu komut gruplar ve kanallar için geçerlidir!")
+
+    if event.is_reply:
+        user = await event.get_reply_message().sender
+        if user:
+            user_name = user.first_name
+            slap_phrases = [
+                f"{user_name}'nin üzerine pasta fırlattı!",
+                f"{user_name}'nin üstüne benzin döktü!",
+                f"{user_name}'yi ateşe attı!",
+                f"{user_name}'nin üstüne su döktü!",
+                f"{user_name}'yi dondurdu!",
+                f"{user_name}'nin üzerine pasta fırlattı!",
+            ]
+            slap_phrase = random.choice(slap_phrases)
+            await event.respond(f"{event.sender.first_name} {slap_phrase}")
+        else:
+            await event.respond("Üzgünüm, kullanıcıyı bulamıyorum.")
+    else:
+        await event.respond("Bu komutu kullanabilmek için bir mesaja yanıt vermelisiniz.")
+
+
 @client.on(events.NewMessage(pattern="^/tektag ?(.*)"))
 async def mentionall(event):
   global tekli_calisan
