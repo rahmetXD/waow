@@ -79,6 +79,9 @@ bayrak = "🏳️‍🌈 🏳️‍⚧️ 🇺🇳 🇦🇫 🇦🇽 🇦🇱 �
 #  güzel isimler...!!! 
 cumle = ['Üzümlü kekim ✨', 'Nar çiçeği ✨', 'Papatya 🌼', 'Karanfil ✨', 'Gül 🌹', 'Ayıcık 🐻', 'Mutlu pandam 🐼', 'Ay parem ✨', 'Ballı lokmam ✨', 'Bebişim 🥰', 'Lale 🌷', 'Zambak ⚜', 'Nergis ✨', 'Sümbül ☘️', 'Nilüfer ☘️', 'Menekşe ⚜️', 'Lavanta ✨', 'Gül pare ✨', 'Reyhan 🌷', 'Kaktüs ⚜️', 'Böğürtlen ☘️', 'Orkide ☘️', 'Manolya ✨', 'Ayçiçeği ✨', 'Tweety ⚜️', 'Star ✨', 'Yonca 🍀', 'Ateş böceği ✨',]
 
+# sorular cano
+soru = ['Naber?', 'Nerelerdesin Aşko?', 'Özledimmmmm', 'İyimisin?', 'Ayıcık seniii', 'Biraz Sohbet edelim?', 'mutlumusun?', 'Nerelisin?', 'Nerdesin Pangoo?', 'Bebişimmmmm', 'Hayvan Severmisin?', 'Çiçek Severmisin?', 'Inst Verde Flowwwlaşakk', 'Ne Zamandır Telegramdasın?', 'Bıcı Bıcıı Yaparım Dalinle', 'Çalışıyormusun?', 'Evlimisin?', 'kebap Severmisin?', 'Günün Nasıl Geçti?', 'Papağan Severmisin?', 'En Sevdiğn Rapçii?', 'Sevgilin Varmı?', 'Açmısın?', 'Okuyormusun?', 'Kaçıncı Sınıfsın?', 'Karamsarmısın?', 'Duygusalmısın?', 'Kışları Severmisin?',]
+
 @client.on(events.NewMessage(pattern="^/btag ?(.*)"))
 async def mentionall(event):
   global anlik_calisan
@@ -244,6 +247,65 @@ async def mentionall(event):
         usrnum = 0
         usrtxt = ""
 
+@client.on(events.NewMessage(pattern="^/otag ?(.*)"))
+async def mentionall(event):
+  global anlik_calisan
+  if event.is_private:
+    return await event.respond("Bu komutu gruplar ve kanallar için geçerli!")
+  
+  admins = []
+  async for admin in client.iter_participants(event.chat_id, filter=ChannelParticipantsAdmins):
+    admins.append(admin.id)
+  if not event.sender_id in admins:
+    return await event.respond("**Bu Komutu Sadece Yöneticiler Kullana Bilir!")
+  
+  if event.pattern_match.group(1):
+    mode = "text_on_cmd"
+    msg = event.pattern_match.group(1)
+  elif event.reply_to_msg_id:
+    mode = "text_on_reply"
+    msg = event.reply_to_msg_id
+    if msg == None:
+        return await event.respond("Önceki Mesajları Etiketlemek İçin Kullanamıyorum.")
+  elif event.pattern_match.group(1) and event.reply_to_msg_id:
+    return await event.respond("İşleme Başlamak İçin Bir Sebep Yok!")
+  else:
+    return await event.respond("İşleme Başlamak için Mesaj Yazmalısın!")
+  
+  if mode == "text_on_cmd":
+    anlik_calisan.append(event.chat_id)
+    usrnum = 0
+    usrtxt = ""
+    async for usr in client.iter_participants(event.chat_id):
+      usrnum += 1
+      usrtxt += f"[{random.choice(soru)}](tg://user?id={usr.id}) "
+      if event.chat_id not in anlik_calisan:
+       await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
+       return
+      if usrnum == 1:
+        await client.send_message(event.chat_id, f"{usrtxt} {msg}")
+        await asyncio.sleep(2)
+        usrnum = 0
+        usrtxt = ""
+        
+  
+  if mode == "text_on_reply":
+    anlik_calisan.append(event.chat_id)
+ 
+    usrnum = 0
+    usrtxt = ""
+    async for usr in client.iter_participants(event.chat_id):
+      usrnum += 1
+      usrtxt += f"[{random.choice(soru)}](tg://user?id={usr.id}) "
+      if event.chat_id not in anlik_calisan:
+        await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
+        return
+      if usrnum == 1:
+        await client.send_message(event.chat_id, usrtxt, reply_to=msg)
+        await asyncio.sleep(2)
+        usrnum = 0
+        usrtxt = ""
+
 @client.on(events.NewMessage(pattern="^/tag ?(.*)"))
 async def mentionall(event):
   global anlik_calisan
@@ -400,7 +462,7 @@ async def mentionall(event):
     usrtxt = ""
     async for usr in client.iter_participants(event.chat_id):
       usrnum += 1
-      usrtxt += f"**👤 - [{usr.first_name}](tg://user?id={usr.id}) \n**"
+      usrtxt += f"**[{usr.first_name}](tg://user?id={usr.id}) \n**"
       if event.chat_id not in tekli_calisan:
         await event.respond("Etiketleme İşlemi Durduruldu!")
         return
@@ -418,7 +480,7 @@ async def mentionall(event):
     usrtxt = ""
     async for usr in client.iter_participants(event.chat_id):
       usrnum += 1
-      usrtxt += f"👤 - [{usr.first_name}](tg://user?id={usr.id}) \n"
+      usrtxt += f"[{usr.first_name}](tg://user?id={usr.id}) \n"
       if event.chat_id not in tekli_calisan:
         await event.respond("Etiketleme İşlemi Durduruldu!")
         return
@@ -457,8 +519,7 @@ async def mentionall(tagadmin):
 	
 @client.on(events.NewMessage(pattern='/durum'))
 async def handler(event):
-	
-    await event.reply('👨‍💻 Hey! Aktifim! Bilgilerim Aşşağıda.\n\n║▻  ⚙️ Versiyon [ V1 ]\n║▻  💠 Python Versiyon : 4.0.0\n║▻  💻 Telethon Versiyon : 2..0')
+    await event.respond('👨‍💻 Hey! Aktifim! Bilgilerim Aşağıda.\n\n║▻  ⚙️ Versiyon [ V1 ]\n║▻  💠 Python Versiyon : 4.0.0\n║▻  💻 Telethon Versiyon : 2.0')
 
 
 
