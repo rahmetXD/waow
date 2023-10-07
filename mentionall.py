@@ -196,11 +196,11 @@ async def mentionall(event):
 
 
 # MÜZİK İNDİRME KOMUTU
-@bot.on_message(filters.command(["bul", "song"]) & ~filters.edited)
-async def bul(_, message):
-    query = " ".join(message.command[1:])
-    m = await message.reply("➻ **sᴀʀᴋɪ ᴀʀᴀɴɪʏᴏʀ ...**")
-    ydl_ops = {"format": "bestaudio[ext=m4a]"}
+@client.on(events.NewMessage(pattern="^/bul|^/song"))
+async def bul(event):
+    query = event.text.split(" ", 1)[1]
+    m = await event.reply("➻ **Şarkı aranıyor ...**")
+    ydl_opts = {"format": "bestaudio[ext=m4a]"}
     try:
         results = YoutubeSearch(query, max_results=1).to_dict()
         link = f"https://youtube.com{results[0]['url_suffix']}"
@@ -212,27 +212,37 @@ async def bul(_, message):
         duration = results[0]["duration"]
 
     except Exception as e:
-        await m.edit("➻ **şᴀʀᴋɪ ʙᴜʟᴜɴᴀᴍᴀᴅɪ ...**")
+        await m.edit("➻ **Şarkı bulunamadı ...**")
         print(str(e))
         return
-    await m.edit("➻ **şᴀʀᴋɪ ɪɴᴅɪʀɪʟɪʏᴏʀ ...**")
+    await m.edit("➻ **Şarkı indiriliyor ...**")
     try:
-        with yt_dlp.YoutubeDL(ydl_ops) as ydl:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(link, download=False)
             audio_file = ydl.prepare_filename(info_dict)
             ydl.process_info(info_dict)
-        rep = f"**➻ ᴘᴀʀᴄ̧ᴀ : {title[:35]}\n➻ sᴜ̈ʀᴇ : {duration}\n\n➻ ɪsᴛᴇʏᴇɴ : {message.from_user.first_name}**"
-        res = f"**➻ ᴘᴀʀᴄ̧ᴀ : {title[:35]}\n➻ sᴜ̈ʀᴇ : {duration}\n\n➻ ɪsᴛᴇʏᴇɴ : {message.from_user.first_name}**"
+        rep = f"**➻ Parça: {title[:35]}\n➻ Süre: {duration}\n\n➻ İsteyen: {event.sender.first_name}**"
+        res = f"**➻ Parça: {title[:35]}\n➻ Süre: {duration}\n\n➻ İsteyen: {event.sender.first_name}**"
         secmul, dur, dur_arr = 1, 0, duration.split(":")
         for i in range(len(dur_arr) - 1, -1, -1):
             dur += int(float(dur_arr[i])) * secmul
             secmul *= 60
-        await m.edit("➻ **şᴀʀᴋɪ ʏᴜ̈ᴋʟᴇɴɪʏᴏʀ ...**")
-        await message.reply_audio(audio_file, caption=rep, parse_mode='md',quote=False, title=title, duration=dur, thumb=thumb_name, performer="♫︎ 𝐌𝐮̈𝐳𝐢𝐤 𝐈𝐧𝐝𝐢𝐫𝐢𝐜𝐢 ♫︎")
+        await m.edit("➻ **Şarkı yükleniyor ...**")
+        await event.reply_audio(
+            audio_file, caption=rep, parse_mode='md', file_name=title, duration=dur, thumb=thumb_name, performer="♫︎ Müzik İndirici ♫︎"
+        )
         await m.delete()
-        await _.send_audio(chat_id=PLAYLIST_ID, audio=audio_file, caption=res, performer="♫︎ Ahri Dowloads ♫︎", parse_mode='md', title=title, duration=dur, thumb=thumb_name)
+        await client.send_file(
+            event.chat_id,
+            audio_file,
+            caption=res,
+            performer="♫︎ Müzik İndirici ♫︎",
+            parse_mode='md',
+            duration=dur,
+            thumb=thumb_name
+        )
     except Exception as e:
-        await m.edit("🔺 **ʙᴇɴɪ ʏᴏɴᴇᴛɪᴄɪ ʏᴀᴘɪɴ ...**")
+        await m.edit("🔺 **Hata: Şarkı indirilirken bir hata oluştu ...**")
         print(e)
 
     try:
@@ -240,6 +250,7 @@ async def bul(_, message):
         os.remove(thumb_name)
     except Exception as e:
         print(e)
+
 
 
 
