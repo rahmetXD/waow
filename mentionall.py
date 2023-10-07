@@ -195,62 +195,6 @@ async def mentionall(event):
         usrtxt = ""
 
 
-# MÜZİK İNDİRME KOMUTU
-@client.on(events.NewMessage(pattern="^/bul|^/song"))
-async def bul(event):
-    query = event.text.split(" ", 1)[1]
-    m = await event.reply("➻ **Şarkı aranıyor ...**")
-    ydl_opts = {"format": "bestaudio[ext=m4a]"}
-    try:
-        results = YoutubeSearch(query, max_results=1).to_dict()
-        link = f"https://youtube.com{results[0]['url_suffix']}"
-        title = results[0]["title"][:40]
-        thumbnail = results[0]["thumbnails"][0]
-        thumb_name = f"{title}.jpg"
-        thumb = requests.get(thumbnail, allow_redirects=True)
-        open(thumb_name, "wb").write(thumb.content)
-        duration = results[0]["duration"]
-
-    except Exception as e:
-        await m.edit("➻ **Şarkı bulunamadı ...**")
-        print(str(e))
-        return
-    await m.edit("➻ **Şarkı indiriliyor ...**")
-    try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(link, download=False)
-            audio_file = ydl.prepare_filename(info_dict)
-            ydl.process_info(info_dict)
-        rep = f"**➻ Parça: {title[:35]}\n➻ Süre: {duration}\n\n➻ İsteyen: {event.sender.first_name}**"
-        res = f"**➻ Parça: {title[:35]}\n➻ Süre: {duration}\n\n➻ İsteyen: {event.sender.first_name}**"
-        secmul, dur, dur_arr = 1, 0, duration.split(":")
-        for i in range(len(dur_arr) - 1, -1, -1):
-            dur += int(float(dur_arr[i])) * secmul
-            secmul *= 60
-        await m.edit("➻ **Şarkı yükleniyor ...**")
-        await event.reply_audio(
-            audio_file, caption=rep, parse_mode='md', file_name=title, duration=dur, thumb=thumb_name, performer="♫︎ Müzik İndirici ♫︎"
-        )
-        await m.delete()
-        await client.send_file(
-            event.chat_id,
-            audio_file,
-            caption=res,
-            performer="♫︎ Müzik İndirici ♫︎",
-            parse_mode='md',
-            duration=dur,
-            thumb=thumb_name
-        )
-    except Exception as e:
-        await m.edit("🔺 **Hata: Şarkı indirilirken bir hata oluştu ...**")
-        print(e)
-
-    try:
-        os.remove(audio_file)
-        os.remove(thumb_name)
-    except Exception as e:
-        print(e)
-
 
 
 
