@@ -53,6 +53,7 @@ async def start(event):
 		                      
                       [Button.url('➕ɢʀᴜʙᴀ ᴇᴋʟᴇ➕', f"https://t.me/{bot_username}?startgroup=a")],
                       [Button.url('📣ᴅᴇsᴛᴇᴋ📣', f"https://t.me/{support}")],
+                      [Button.inline("📚ᴋᴏᴍᴜᴛʟᴀʀ📚", data="help")],
                       [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')],
 		                  
                     ),
