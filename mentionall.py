@@ -72,6 +72,20 @@ async def help(event):
                link_preview=False)    
 
 
+@client.on(events.callbackquery.CallbackQuery(data="start"))
+async def start(event):
+    await event.edit(f"👋🏻 ᴍᴇʀʜᴀʙᴀ, ʙᴇɴ ᴀʜʀɪ! ʙᴀᴢı ᴋᴜʟʟᴀɴışʟı ᴏ̈ᴢᴇʟʟɪᴋʟᴇʀᴇ sᴀʜɪᴘ ᴛᴇʟᴇɢʀᴀᴍ ᴜ̈ʏᴇ ᴇᴛɪᴋᴇᴛʟᴇᴍᴇ ʙᴏᴛᴜʏᴜᴍ.\n\n📚 ᴋᴏᴍᴜᴛʟᴀʀı ɢᴏ̈ʀᴍᴇᴋ ɪ̇ᴄ̧ɪɴ /help, ᴋᴏᴍᴜᴛᴜɴᴜ ᴋᴜʟʟᴀɴᴀ ʙɪʟɪʀsɪɴɪᴢ.", 
+                 buttons=(                  
+		                      
+                      [Button.url('➕ɢʀᴜʙᴀ ᴇᴋʟᴇ➕', f"https://t.me/{bot_username}?startgroup=a")],
+                      [Button.url('📣ᴅᴇsᴛᴇᴋ📣', f"https://t.me/{support}")],
+                      [Button.inline("📚ᴋᴏᴍᴜᴛʟᴀʀ📚", data="help")],
+                      [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')],
+		                  
+                    ),
+                    link_preview=False
+                   )
+
 
 @client.on(events.NewMessage(pattern='^(?i)/cancel'))
 async def cancel(event):
