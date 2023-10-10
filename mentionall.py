@@ -15,6 +15,7 @@ import youtube_dl
 import platform
 from telethon.tl import types
 from telethon.tl import functions, types
+import telethon
 
 logging.basicConfig(
     level=logging.INFO,
