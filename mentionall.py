@@ -620,6 +620,8 @@ async def handler(event):
         await event.respond('Bu komutu kullanma izniniz yok!')
 
 
+from telethon.tl import types
+
 @client.on(events.NewMessage(pattern='/grup'))
 async def grup_info(event):
     # Sadece grup ve kanallarda çalıştır
@@ -664,27 +666,27 @@ async def grup_info(event):
         elif participant.bot:
             bot_count += 1
 
-    # Grup kurucusunu bul
-    founder = None
-    chat_admins = await event.client.get_participants(group_id, filter=types.ChannelParticipantsAdmins)
-    for admin in chat_admins:
-        if admin.creator:
-            founder = admin
-            break  # Kurucuyu bulduktan sonra döngüyü sonlandır
+    # Özel durumları kontrol et
+    special_status = ""
+    if deleted_count > 0:
+        special_status += f'Delete Hesap: {deleted_count}\n'
+    if bot_count > 0:
+        special_status += f'Bot Sayısı: {bot_count}\n'
+
+    # Özel durumlar olmadığında "Bulunamadı" mesajı ver
+    if not special_status:
+        special_status = "Bulunamadı"
 
     response_text = (
         f'➻ Grup Adı: {group_name}\n'
         f'➻ Grup ID: {group_id}\n'
-        f'➻ Delete Hesap: {deleted_count}\n'
         f'➻ Aktif Kullanıcıları: {active_count}\n'
-        f'➻ Bot Sayısı: {bot_count}\n'
         f'➻ Grup Üye Sayısı: {total_count}\n'
-        f'➻ Kurucu: @{founder.username if founder else "Bulunamadı"}'
+        f'{special_status}'
     )
 
     # Bilgileri yanıt olarak gönder
     await event.respond(response_text)
-
 
 print("Ahri Tagger AKtif, Sağol Sahip! @rahmetiNC ✨")
 client.run_until_disconnected()
