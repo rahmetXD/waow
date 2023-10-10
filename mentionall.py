@@ -222,51 +222,34 @@ async def mentionall(event):
         usrnum = 0
         usrtxt = ""
 
+@client.on(events.NewMessage(pattern="/dtag"))
+async def start_tagging(event):
+    user = await event.get_sender()
+    user_first_name = user.first_name
 
-@bot.on_message(filters.command(["bul", "song"]) & ~filters.edited)
-async def bul(_, message):
-    query = " ".join(message.command[1:])
-    m = await message.reply("➻ **sᴀʀᴋɪ ᴀʀᴀɴɪʏᴏʀ ...**")
-    ydl_opts = {"format": "bestaudio[ext=m4a]"}
-    try:
-        results = YoutubeSearch(query, max_results=1).to_dict()
-        link = f"https://youtube.com{results[0]['url_suffix']}"
-        title = results[0]["title"][:40]
-        thumbnail = results[0]["thumbnails"][0]
-        thumb_name = f"{title}.jpg"
-        thumb = requests.get(thumbnail, allow_redirects=True)
-        open(thumb_name, "wb").write(thumb.content)
-        duration = results[0]["duration"]
+    # Sadece gruplar ve kanallar için işlem yapın
+    if isinstance(event.chat, (types.Chat, types.Channel)):
+        # Hedeflenen gruptaki son aktif olan 50 kişiyi alın
+        group_entity = event.chat_id
+        participants = await client.get_participants(group_entity, limit=50)
 
-    except Exception as e:
-        await m.edit("➻ **şᴀʀᴋɪ ʙᴜʟᴜɴᴀᴍᴀᴅɪ ...**")
-        print(str(e))
-        return
-    await m.edit("➻ **şᴀʀᴋɪ ɪɴᴅɪʀɪʟɪʏᴏʀ ...**")
-    try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(link, download=False)
-            audio_file = ydl.prepare_filename(info_dict)
-            ydl.process_info(info_dict)
-        rep = f"**➻ ᴘᴀʀᴄ̧ᴀ : {title[:35]}\n➻ sᴜ̈ʀᴇ : {duration}\n\n➻ ɪsᴛᴇʏᴇɴ : {message.from_user.first_name}**"
-        res = f"**➻ ᴘᴀʀᴄ̧a : {title[:35]}\n➻ sᴜ̈ʀᴇ : {duration}\n\n➻ ɪsᴛᴇʏᴇɴ : {message.from_user.first_name}**"
-        secmul, dur, dur_arr = 1, 0, duration.split(":")
-        for i in range(len(dur_arr) - 1, -1, -1):
-            dur += int(float(dur_arr[i])) * secmul
-            secmul *= 60
-        await m.edit("➻ **şᴀʀᴋɪ ʏᴜ̈ᴋʟᴇɴɪʏᴏʀ ...**")
-        await message.reply_audio(audio_file, caption=rep, parse_mode='md',quote=False, title=title, duration=dur, thumb=thumb_name, performer="♫︎ 𝐌𝐮̈𝐳𝐢𝐤 𝐈𝐧𝐝𝐢𝐫𝐢𝐜𝐢 ♫︎")
-        await m.delete()
-        await _.send_audio(chat_id=PLAYLIST_ID, audio=audio_file, caption=res, performer="♫︎ 𝐌𝐮̈𝐳𝐢𝐤 𝐈𝐧𝐝𝐢𝐫𝐢𝐜𝐢 ♫︎", parse_mode='md', title=title, duration=dur, thumb=thumb_name)
-    except Exception as e:
-        await m.edit("🔺 **ʙᴇɴɪ ʏᴏɴᴇᴛɪᴄɪ ʏᴀᴘɪɴ ...**")
-        print(e)
+        questions = [
+            "Nerdesin?",
+            "Napiyorsun?",
+            "Nasılsın?",
+            # Diğer sorular buraya eklenir
+        ]
 
-    try:
-        os.remove(audio_file)
-        os.remove(thumb_name)
-    except Exception as e:
-        print(e)
+        for participant in participants:
+            if not participant.bot and not participant.deleted:
+                username = participant.username
+                if username:
+                    for question in questions:
+                        tagged_message = f"⤇ @{username}, {question}"
+                        await event.respond(tagged_message)
+                        await asyncio.sleep(2)
+    else:
+        await event.respond("Bu komut yalnızca gruplar ve kanallarda kullanılabilir.")
 
 
 @client.on(events.NewMessage(pattern="^/ctag ?(.*)"))
@@ -790,39 +773,7 @@ async def calculate_zodiac_sign(event):
     except Exception as e:
         await event.reply("Bir hata oluştu: Lütfen daha sonra tekrar deneyin.")
 
-@client.on(events.NewMessage(pattern='/ara'))
-async def search_music(event):
-    # Kullanıcının gönderdiği metni al
-    query = event.raw_text.split('/ara', 1)[1].strip()
 
-    # YouTube'da arama yap
-    search_url = f'https://www.youtube.com/results?search_query={query}'
-    response = requests.get(search_url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-
-    # İlk sonucun bilgilerini çek
-    results = soup.find_all('div', class_='yt-lockup-content')
-    if results:
-        first_result = results[0]
-        title = first_result.find('a', class_='yt-uix-tile-link').text
-        duration = first_result.find('span', class_='video-time').text
-        link = f"https://www.youtube.com{first_result.find('a', class_='yt-uix-tile-link')['href']}"
-
-        # Bilgileri yanıt olarak gönder
-        response_text = (
-            f"💬 Parça: {title}\n"
-            f"⌚ Süre: {duration}\n"
-            f"🔗 Link: {link}"
-        )
-
-        await event.respond(response_text)
-    else:
-        await event.respond("Sonuç bulunamadı.")
-
-# Hata mesajını görmezden gelme
-@client.on(events.NewMessage(pattern='/ara'))
-async def ignore_invalid_search(event):
-    pass
 
 print("Ahri Tagger AKtif, Sağol Sahip! @rahmetiNC ✨")
 client.run_until_disconnected()
