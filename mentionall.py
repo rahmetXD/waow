@@ -27,7 +27,7 @@ bot_username = Config.BOT_USERNAME
 support = Config.SUPPORT_CHAT
 owner = Config.OWNER_USERNAME
 bot_name = Config.BOT_NAME
-
+owner_id = Config.OWNER_ID
 
 SUDO_USERS = Config.SUDO_USERS
 
@@ -582,27 +582,27 @@ async def mentionall(tagadmin):
 		sleep(0.5)
 	
 
+import asyncio
+
 @client.on(events.NewMessage(pattern='/durum'))
 async def handler(event):
     # Sadece belirli bir kullanıcı kimliğine sahip kullanıcılar tarafından kullanılabilir
-    allowed_user_id = 5944841427  # İzin verilen kullanıcının kimliği
+    allowed_user_id = {owner_id}  # İzin verilen kullanıcının kimliği
 
     if event.sender_id == allowed_user_id:
         user = await event.get_sender()
-        user_name = user.first_name  # Kullanıcının adını alın
-        python_version = platform.python_version()  # Python sürümünü alın
-        telethon_version = telethon.__version__  # Telethon sürümünü alın
+        user_first_name = user.first_name  # Kullanıcının adını alın
 
         response_text = (
-            f'👨‍💻 Hey! {user_name} Aktifim, Bilgilerim Aşağıda.\n\n'
-            f'║▻  ⚙️ Versiyon [ V1 ]\n'
-            f'║▻  💠 Python Versiyon : {python_version}\n'
-            f'║▻  💻 Telethon Versiyon : {telethon_version}'
+            f'Hey, {user_first_name} Aktifim! Bilgilerim Aşağıda.\n\n'
+            f'⚙️ Versiyon [ V1 ]\n'
+            f'💠 Python Versiyon : {platform.python_version()}\n'
+            f'💻 Telethon Versiyon : {telethon.__version__}'
         )
 
         await event.respond(response_text)
     else:
-        await event.respond('Bu komutu kullanma izniniz yok.')
+        await event.respond('Bu komutu kullanma izniniz yok!')
 
 print("Ahri Tagger AKtif, Sağol Sahip! @rahmetiNC ✨")
 client.run_until_disconnected()
