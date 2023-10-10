@@ -621,6 +621,7 @@ async def handler(event):
 
 
 from telethon.tl import types
+from telethon import Button
 
 @client.on(events.NewMessage(pattern='/grup'))
 async def grup_info(event):
@@ -669,13 +670,19 @@ async def grup_info(event):
     # Özel durumları kontrol et
     special_status = ""
     if deleted_count > 0:
-        special_status += f'Delete Hesap: {deleted_count}\n'
+        special_status += f'➻ Delete Hesap: {deleted_count}\n'
     if bot_count > 0:
-        special_status += f'Bot Sayısı: {bot_count}\n'
+        special_status += f'➻ Bot Sayısı: {bot_count}\n'
 
     # Özel durumlar olmadığında "Bulunamadı" mesajı ver
     if not special_status:
         special_status = "Bulunamadı"
+
+    # Owner'ın kullanıcı adını belirtin
+    owner_username = "owner"  # Değiştirin
+
+    # Owner butonunu oluşturun
+    owner_button = Button.url('🛡ᴏᴡɴᴇʀ🛡', f"https://t.me/{owner}")
 
     response_text = (
         f'➻ Grup Adı: {group_name}\n'
@@ -685,8 +692,8 @@ async def grup_info(event):
         f'{special_status}'
     )
 
-    # Bilgileri yanıt olarak gönder
-    await event.respond(response_text)
+    # Bilgileri yanıt olarak gönder ve Owner butonunu ekleyin
+    await event.respond(response_text, buttons=[[owner_button]])
 
 print("Ahri Tagger AKtif, Sağol Sahip! @rahmetiNC ✨")
 client.run_until_disconnected()
