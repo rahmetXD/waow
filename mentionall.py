@@ -701,52 +701,45 @@ async def grup_info(event):
     await event.respond(response_text, buttons=[[owner_button]])
 
 
-
-# /burc komutu
 @client.on(events.NewMessage(pattern='/burc (.+)'))
-async def burc_hesapla(event):
+async def calculate_zodiac_sign(event):
     try:
-        # Kullanıcının doğum tarihi bilgisini al
-        date_of_birth = event.pattern_match.group(1)
+        birth_date_str = event.pattern_match.group(1)  # Doğum tarihi girişi alınır
+        birth_date = datetime.strptime(birth_date_str, "%d.%m")  # Tarih formatı kontrol edilir
 
-        # Doğru tarih formatını kontrol et (GG.AA)
-        birth_date = datetime.strptime(date_of_birth, "%d.%m")
-
-        # Burçları ve tarih aralıklarını tanımla
-        burclar = {
-            "Koç": (datetime(2000, 3, 21), datetime(2000, 4, 19)),
-            "Boğa": (datetime(2000, 4, 20), datetime(2000, 5, 20)),
-            "İkizler": (datetime(2000, 5, 21), datetime(2000, 6, 20)),
-            "Yengeç": (datetime(2000, 6, 21), datetime(2000, 7, 22)),
-            "Aslan": (datetime(2000, 7, 23), datetime(2000, 8, 22)),
-            "Başak": (datetime(2000, 8, 23), datetime(2000, 9, 22)),
-            "Terazi": (datetime(2000, 9, 23), datetime(2000, 10, 22)),
-            "Akrep": (datetime(2000, 10, 23), datetime(2000, 11, 21)),
-            "Yay": (datetime(2000, 11, 22), datetime(2000, 12, 21)),
-            "Oğlak": (datetime(2000, 12, 22), datetime(2000, 1, 19)),
-            "Kova": (datetime(2000, 1, 20), datetime(2000, 2, 18)),
-            "Balık": (datetime(2000, 2, 19), datetime(2000, 3, 20))
+        # Burç tarih aralıkları ve adları
+        zodiac_signs = {
+            "Koç": (datetime(birth_date.year, 3, 21), datetime(birth_date.year, 4, 19)),
+            "Boğa": (datetime(birth_date.year, 4, 20), datetime(birth_date.year, 5, 20)),
+            "İkizler": (datetime(birth_date.year, 5, 21), datetime(birth_date.year, 6, 20)),
+            "Yengeç": (datetime(birth_date.year, 6, 21), datetime(birth_date.year, 7, 22)),
+            "Aslan": (datetime(birth_date.year, 7, 23), datetime(birth_date.year, 8, 22)),
+            "Başak": (datetime(birth_date.year, 8, 23), datetime(birth_date.year, 9, 22)),
+            "Terazi": (datetime(birth_date.year, 9, 23), datetime(birth_date.year, 10, 22)),
+            "Akrep": (datetime(birth_date.year, 10, 23), datetime(birth_date.year, 11, 21)),
+            "Yay": (datetime(birth_date.year, 11, 22), datetime(birth_date.year, 12, 21)),
+            "Oğlak": (datetime(birth_date.year, 12, 22), datetime(birth_date.year, 12, 31)),
+            "Oğlak veya Kova": (datetime(birth_date.year, 1, 1), datetime(birth_date.year, 1, 19)),
+            "Kova": (datetime(birth_date.year, 1, 20), datetime(birth_date.year, 2, 18)),
+            "Balık": (datetime(birth_date.year, 2, 19), datetime(birth_date.year, 3, 20))
         }
 
-        # Doğum tarihi ile burçları karşılaştır
-        burc = None
-        for burc_adi, (baslangic_tarihi, bitis_tarihi) in burclar.items():
-            if baslangic_tarihi <= birth_date <= bitis_tarihi:
-                burc = burc_adi
+        # Doğum tarihine göre burç hesaplanır
+        user_zodiac_sign = None
+        for sign, (start_date, end_date) in zodiac_signs.items():
+            if start_date <= birth_date <= end_date:
+                user_zodiac_sign = sign
                 break
 
-        if burc:
-            await event.respond(f'Doğum tarihinize göre burcunuz: {burc}')
+        if user_zodiac_sign:
+            await event.reply(f"Doğum tarihine göre burcunuz: {user_zodiac_sign}")
         else:
-            await event.respond('Geçersiz doğum tarihi!')
-
+            await event.reply("Geçersiz doğum tarihi veya burç hesaplanamadı.")
     except ValueError:
-        await event.respond('Hatalı tarih formatı: Lütfen GG.AA (örn. 01.03) Şeklinde girin!')
+        await event.reply("Hatalı tarih formatı! Lütfen GG.AA (örnek: 15.03) formatında girin.")
+    except Exception as e:
+        await event.reply("Bir hata oluştu: Lütfen daha sonra tekrar deneyin.")
 
-# Hata mesajını görmezden gelme
-@client.on(events.NewMessage(pattern='/burc (.+)'))
-async def ignore_invalid_burc(event):
-    pass
 
 print("Ahri Tagger AKtif, Sağol Sahip! @rahmetiNC ✨")
 client.run_until_disconnected()
