@@ -16,6 +16,8 @@ import platform
 from telethon.tl import types
 from telethon.tl import functions, types
 import telethon
+from datetime import datetime
+from telethon.tl import functions
 
 logging.basicConfig(
     level=logging.INFO,
@@ -565,24 +567,26 @@ async def cancel(event):
   tekli_calisan.remove(event.chat_id)
 	
 
-
 @client.on(events.NewMessage(pattern="^/admins ?(.*)"))
-async def mentionall(tagadmin):
+async def mention_admins(event):
+    if event.pattern_match.group(1):
+        seasons = event.pattern_match.group(1)
+    else:
+        seasons = ""
 
-	if tagadmin.pattern_match.group(1):
-		seasons = tagadmin.pattern_match.group(1)
-	else:
-		seasons = ""
+    chat = await event.get_input_chat()
+    await event.delete()
 
-	chat = await tagadmin.get_input_chat()
-	a_=0
-	await tagadmin.delete()
-	async for i in client.iter_participants(chat, filter=ChannelParticipantsAdmins):
-		if a_ == 500:
-			break
-		a_+=5
-		await tagadmin.client.send_message(tagadmin.chat_id, "**[{}](tg://user?id={}) {}**".format(i.first_name, i.id, seasons))
-		sleep(0.5)
+    async for admin in client.iter_participants(chat, filter=ChannelParticipantsAdmins):
+        try:
+            await event.client(functions.messages.AddChatUserRequest(chat, admin.id, fwd_limit=10))
+            await asyncio.sleep(2)  # Her admini 2 saniye arayla etiketlemek için
+        except Exception as e:
+            pass
+
+    sender = await event.get_sender()
+    await event.respond(f'Hey, {admin.username}! {sender.first_name} Sizi Çağırıyor... {seasons}')
+
 	
 @client.on(events.NewMessage(pattern='/bot'))
 async def bot_group_count(event):
@@ -598,7 +602,7 @@ async def bot_group_count(event):
 
         await event.respond(f'🤖 Bot {group_count} grupta bulunuyor.')
     else:
-        await event.respond('Bu komutu kullanma izniniz yok.')
+        await event.respond('Bu komutu kullanma izniniz yok!')
 
 
 @client.on(events.NewMessage(pattern='/durum'))
@@ -696,6 +700,53 @@ async def grup_info(event):
     # Bilgileri yanıt olarak gönder ve Owner butonunu ekleyin
     await event.respond(response_text, buttons=[[owner_button]])
 
+
+
+# /burc komutu
+@client.on(events.NewMessage(pattern='/burc (.+)'))
+async def burc_hesapla(event):
+    try:
+        # Kullanıcının doğum tarihi bilgisini al
+        date_of_birth = event.pattern_match.group(1)
+
+        # Doğru tarih formatını kontrol et (GG.AA)
+        birth_date = datetime.strptime(date_of_birth, "%d.%m")
+
+        # Burçları ve tarih aralıklarını tanımla
+        burclar = {
+            "Koç": (datetime(2000, 3, 21), datetime(2000, 4, 19)),
+            "Boğa": (datetime(2000, 4, 20), datetime(2000, 5, 20)),
+            "İkizler": (datetime(2000, 5, 21), datetime(2000, 6, 20)),
+            "Yengeç": (datetime(2000, 6, 21), datetime(2000, 7, 22)),
+            "Aslan": (datetime(2000, 7, 23), datetime(2000, 8, 22)),
+            "Başak": (datetime(2000, 8, 23), datetime(2000, 9, 22)),
+            "Terazi": (datetime(2000, 9, 23), datetime(2000, 10, 22)),
+            "Akrep": (datetime(2000, 10, 23), datetime(2000, 11, 21)),
+            "Yay": (datetime(2000, 11, 22), datetime(2000, 12, 21)),
+            "Oğlak": (datetime(2000, 12, 22), datetime(2000, 1, 19)),
+            "Kova": (datetime(2000, 1, 20), datetime(2000, 2, 18)),
+            "Balık": (datetime(2000, 2, 19), datetime(2000, 3, 20))
+        }
+
+        # Doğum tarihi ile burçları karşılaştır
+        burc = None
+        for burc_adi, (baslangic_tarihi, bitis_tarihi) in burclar.items():
+            if baslangic_tarihi <= birth_date <= bitis_tarihi:
+                burc = burc_adi
+                break
+
+        if burc:
+            await event.respond(f'Doğum tarihinize göre burcunuz: {burc}')
+        else:
+            await event.respond('Geçersiz doğum tarihi!')
+
+    except ValueError:
+        await event.respond('Hatalı tarih formatı: Lütfen GG.AA (örn. 01.03) Şeklinde girin!')
+
+# Hata mesajını görmezden gelme
+@client.on(events.NewMessage(pattern='/burc (.+)'))
+async def ignore_invalid_burc(event):
+    pass
 
 print("Ahri Tagger AKtif, Sağol Sahip! @rahmetiNC ✨")
 client.run_until_disconnected()
