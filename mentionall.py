@@ -619,6 +619,8 @@ async def handler(event):
     else:
         await event.respond('Bu komutu kullanma izniniz yok!')
 
+
+
 @client.on(events.NewMessage(pattern='/grup'))
 async def grup_info(event):
     # Sadece grup ve kanallarda çalıştır
@@ -648,10 +650,20 @@ async def grup_info(event):
     chat_info = await event.client.get_entity(group_id)
 
     # Diğer bilgileri al
-    deleted_count = chat_info.participants_count - chat_info.participants_count_with_deleted
-    active_count = chat_info.participants_count - chat_info.kicked_count - chat_info.left_count
-    bot_count = sum(1 for participant in chat_info.members if participant.bot)
-    total_count = chat_info.participants_count
+    deleted_count = 0
+    active_count = 0
+    bot_count = 0
+    total_count = 0
+
+    # Katılmış üyelerin listesini al
+    async for participant in event.client.iter_participants(chat_info):
+        total_count += 1
+        if participant.deleted:
+            deleted_count += 1
+        elif not participant.bot:
+            active_count += 1
+        elif participant.bot:
+            bot_count += 1
 
     # Kurucuyu bul
     chat_admins = await event.client.get_participants(group_id, filter=types.ChannelParticipantsAdmins)
