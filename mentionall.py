@@ -736,7 +736,7 @@ async def calculate_zodiac_sign(event):
         else:
             await event.reply("Geçersiz doğum tarihi veya burç hesaplanamadı.")
     except ValueError:
-        await event.reply("Hatalı tarih formatı! Lütfen GG.AA (örnek: 15.03) formatında girin.")
+        pass  # Hatalı tarih formatını görmezden gel
     except Exception as e:
         await event.reply("Bir hata oluştu: Lütfen daha sonra tekrar deneyin.")
 
