@@ -18,6 +18,9 @@ from telethon.tl import functions, types
 import telethon
 from datetime import datetime
 from telethon.tl import functions
+import re
+import requests
+from bs4 import BeautifulSoup
 
 logging.basicConfig(
     level=logging.INFO,
@@ -740,6 +743,31 @@ async def calculate_zodiac_sign(event):
     except Exception as e:
         await event.reply("Bir hata oluştu: Lütfen daha sonra tekrar deneyin.")
 
+@client.on(events.NewMessage(pattern='/ara (.+)'))
+async def search_music(event):
+    query = event.pattern_match.group(1)  # Kullanıcının girdiği arama sorgusu
+    search_url = f"https://www.youtube.com/results?search_query={query}"
+
+    try:
+        # YouTube'da arama yap
+        response = requests.get(search_url)
+        soup = BeautifulSoup(response.text, "html.parser")
+        video_results = soup.find_all("a", {"href": re.compile(r"\/watch\?v=.+")})
+
+        # İlk 5 sonucu al ve kullanıcıya gönder
+        if video_results:
+            response_text = ""
+            for video in video_results[:5]:
+                video_title = video.text
+                video_link = "https://youtube.com" + video["href"]
+                response_text += f"💬 ᴘᴀʀᴄ̧ᴀ : {video_title}\n"
+                response_text += f"🔗 ʟɪɴᴋ : ʏᴏᴜᴛᴜʙᴇ'ᴅᴇɴ ɪᴢʟᴇ ({video_link})\n\n"
+            
+            await event.respond(response_text)
+        else:
+            await event.respond("Sonuç bulunamadı.")
+    except Exception as e:
+        await event.respond("Bir hata oluştu: Lütfen daha sonra tekrar deneyin.")
 
 print("Ahri Tagger AKtif, Sağol Sahip! @rahmetiNC ✨")
 client.run_until_disconnected()
