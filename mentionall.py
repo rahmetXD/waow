@@ -581,13 +581,58 @@ async def mentionall(tagadmin):
 		await tagadmin.client.send_message(tagadmin.chat_id, "**[{}](tg://user?id={}) {}**".format(i.first_name, i.id, seasons))
 		sleep(0.5)
 	
-
 import asyncio
+import platform
+import telethon
+
+@client.on(events.NewMessage(pattern='/bilgi'))
+async def bilgi_handler(event):
+    # Sadece belirli bir kullanıcı kimliğine sahip kullanıcılar tarafından kullanılabilir
+    allowed_user_id = 5944841427  # İzin verilen kullanıcının kimliği
+
+    if event.sender_id == allowed_user_id:
+        bot_name = "Ahri"  # Botun adını buraya ekleyin
+        bot_username = "Ahritrbot"  # Botun kullanıcı adını buraya ekleyin
+        python_version = platform.python_version()  # Python sürümünü alın
+        telethon_version = telethon.__version__  # Telethon sürümünü alın
+
+        # Kaç grupta olduğunu alın
+        async for dialog in client.iter_dialogs():
+            if dialog.is_group:
+                group_count += 1
+
+        # En son eklediği grubu alın
+        async for event in client.iter_messages(allowed_user_id, reverse=True):
+            if event.chat and event.chat.is_group:
+                last_group = event.chat.title
+                break
+
+        # VPS ping bilgisini alın
+        import subprocess
+        vps_ping = subprocess.check_output(["ping", "-c", "1", "google.com"]).decode("utf-8")
+        ping_lines = vps_ping.splitlines()
+        ping_result = ping_lines[-1]
+
+        response_text = (
+            f'🤖 {bot_name} İstatistikleri:\n'
+            f'👤 Kullanıcı Adı: @{bot_username}\n'
+            f'🌐 Toplam Grup Sayısı: {group_count}\n'
+            f'🏠 Son Eklenen Grup: {last_group}\n'
+            f'📡 VPS Ping Bilgisi:\n{ping_result}\n'
+            f'⚙️ Versiyon [ V1 ]\n'
+            f'💠 Python Versiyon : {python_version}\n'
+            f'💻 Telethon Versiyon : {telethon_version}'
+        )
+
+        await event.respond(response_text)
+    else:
+        await event.respond('Bu komutu kullanma izniniz yok.')
+
 
 @client.on(events.NewMessage(pattern='/durum'))
 async def handler(event):
     # Sadece belirli bir kullanıcı kimliğine sahip kullanıcılar tarafından kullanılabilir
-    allowed_user_id = {owner_id}  # İzin verilen kullanıcının kimliği
+    allowed_user_id = 5944841427 # İzin verilen kullanıcının kimliği
 
     if event.sender_id == allowed_user_id:
         user = await event.get_sender()
