@@ -12,7 +12,7 @@ import random
 import pyrogram
 from youtubesearchpython import VideosSearch
 import youtube_dl
-
+import platform
 
 logging.basicConfig(
     level=logging.INFO,
@@ -588,10 +588,21 @@ async def handler(event):
     allowed_user_id = 5944841427  # İzin verilen kullanıcının kimliği
 
     if event.sender_id == allowed_user_id:
-        await event.respond('👨‍💻 Hey! Aktifim! Bilgilerim Aşağıda.\n\n║▻  ⚙️ Versiyon [ V1 ]\n║▻  💠 Python Versiyon : 4.0.0\n║▻  💻 Telethon Versiyon : 2.0')
-    else:
-        await event.respond('Olamaz, Sen Sahibim Değilsin!')
+        user = await event.get_sender()
+        user_name = user.first_name  # Kullanıcının adını alın
+        python_version = platform.python_version()  # Python sürümünü alın
+        telethon_version = telethon.__version__  # Telethon sürümünü alın
 
+        response_text = (
+            f'👨‍💻 Hey! {user_name} Aktifim, Bilgilerim Aşağıda.\n\n'
+            f'║▻  ⚙️ Versiyon [ V1 ]\n'
+            f'║▻  💠 Python Versiyon : {python_version}\n'
+            f'║▻  💻 Telethon Versiyon : {telethon_version}'
+        )
+
+        await event.respond(response_text)
+    else:
+        await event.respond('Bu komutu kullanma izniniz yok.')
 
 print("Ahri Tagger AKtif, Sağol Sahip! @rahmetiNC ✨")
 client.run_until_disconnected()
