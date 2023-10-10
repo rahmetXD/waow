@@ -222,6 +222,8 @@ async def mentionall(event):
         usrnum = 0
         usrtxt = ""
 
+import random
+
 @client.on(events.NewMessage(pattern="/dtag"))
 async def start_tagging(event):
     user = await event.get_sender()
@@ -229,27 +231,60 @@ async def start_tagging(event):
 
     # Sadece gruplar ve kanallar için işlem yapın
     if isinstance(event.chat, (types.Chat, types.Channel)):
-        # Hedeflenen gruptaki son aktif olan 50 kişiyi alın
-        group_entity = event.chat_id
-        participants = await client.get_participants(group_entity, limit=50)
+        # Grubun adminlerini alın
+        admins = await client.get_participants(event.chat_id, filter=ChannelParticipantsAdmins)
 
-        questions = [
-            "Nerdesin?",
-            "Napiyorsun?",
-            "Nasılsın?",
-            # Diğer sorular buraya eklenir
-        ]
+        # Eğer kullanıcı grup adminlerinden biriyse devam edin
+        if user in admins:
+            # Hedeflenen gruptaki son aktif olan 50 kişiyi alın
+            group_entity = event.chat_id
+            participants = await client.get_participants(group_entity, limit=50)
 
-        for participant in participants:
-            if not participant.bot and not participant.deleted:
-                username = participant.username
-                if username:
-                    for question in questions:
-                        tagged_message = f"⤇ @{username}, {question}"
-                        await event.respond(tagged_message)
-                        await asyncio.sleep(2)
+            if participants:
+                questions = [
+        "Nerdesin?",
+        "Napiyorsun?",
+        "Nasılsın?",
+        "Bugün hava nasıl?",
+        "Son film tavsiyen nedir?",
+        "Hafta sonu planın var mı?",
+        "Hangi kitabı okuyorsun?",
+        "En sevdiğin yemek nedir?",
+        "En son seyahat ettiğin yer neresiydi?",
+        "Hobilerin nelerdir?",
+        "En sevdiğin mevsim nedir?",
+        "Hangi sporu seversin?",
+        "En son izlediğin konser hangisiydi?",
+        "Hayat felsefen nedir?",
+        "En sevdiğin tatil yeri neresi?",
+        "Son okuduğun kitap neydi?",
+        "En sevdiğin dizi/film nedir?",
+        "Hafta içi en sevdiğin gün hangisi?",
+        "En sevdiğin renk nedir?",
+        "En sevdiğin müzik türü nedir?",
+        "Gelecekle ilgili bir hayalin var mı?",
+        "En sevdiğin çiçek nedir?",
+        "Hangi ülkeyi ziyaret etmek istersin?",
+        "En sevdiğin spor takımı hangisi?",
+        "Hayatta gerçekleştirmek istediğin bir hedefin var mı?"
+                                               ]
+
+                # Katılımcıları rastgele sırayla karıştırın
+                random.shuffle(participants)
+                for i, participant in enumerate(participants):
+                    if not participant.bot and not participant.deleted:
+                        username = participant.username
+                        if username:
+                            question = random.choice(questions)  # Rastgele bir soru seçin
+                            tagged_message = f"⤇ @{username}, {question}"
+                            await event.respond(tagged_message)
+                            await asyncio.sleep(2)
+                            questions.remove(question)  # Aynı soruyu birden fazla kişiye sormamak için kaldırın
+        else:
+            await event.respond("Bu komutu kullanabilmek için bir grup admini olmalısınız!")
     else:
-        await event.respond("Bu komut yalnızca gruplar ve kanallarda kullanılabilir.")
+        await event.respond("Bu komut yalnızca gruplar ve kanallarda kullanılabilir!")
+
 
 
 @client.on(events.NewMessage(pattern="^/ctag ?(.*)"))
@@ -479,7 +514,7 @@ async def list_bots(event):
         return
 
     # "Bir saniye bekleyin..." mesajını gönder
-    message = await event.respond("Bir Saniye..!")
+    message = await event.respond("🔁 Hazırlanıyor...")
 
     # 3 saniye bekle
     await asyncio.sleep(3)
