@@ -398,6 +398,8 @@ async def cancel(event):
   anlik_calisan.remove(event.chat_id)
 	
 
+import random
+
 @client.on(events.NewMessage(pattern="^/eros$"))
 async def eros(event):
     # Sadece grup ve kanallarda çalıştır
@@ -405,25 +407,59 @@ async def eros(event):
         await event.respond("Bu komut yalnızca grup ve kanallarda kullanılabilir.")
         return
 
+    # Grup veya kanal katılımcılarını al
     users = await client.get_participants(event.chat_id, limit=200)
     
     users_list = []
     for user in users:
         if user.bot or user.deleted:
-            pass
+            continue  # Silinmiş hesapları veya botları atla
         else:
             users_list.append(user)
     count = len(users_list)
     
+    # Rastgele iki kullanıcı seç
     first_user = users_list[random.randint(0, count - 1)]
     second_user = users_list[random.randint(0, count - 1)]
     
+    # Belirli kullanıcıları kontrol et
     if (first_user.id == 1550788256 or first_user.id == 5576614947
         or second_user.id == 5375589992 or second_user.id == 5576614947):
+        # Belirli kullanıcılar eşleştiğinde özel bir yanıt gönder
         await event.respond("**💌 Eros'un oku atıldı.\n• Aşıklar  :\n\n@[kullanici1](tg://user?id=5053767281) ❤️ @[kullanici2](tg://user?id=5533927130)**")
     else:
-        await event.respond(f"**💌 Eros'un oku atıldı.\n• Aşıklar  :\n\n@{first_user.username} ❣️ @{second_user.username}**")
+        # Rastgele seçilen kullanıcıların adlarını veya kullanıcı adlarını gönder
+        percentage = random.randint(1, 100)  # Rastgele bir yüzde hesapla
+        await event.respond(f"**💌 Eros'un oku atıldı.\n• Aşıklar  :\n\n@{first_user.username} ❣️ @{second_user.username}\n\n📊 Eşleşme Yüzdesi: {percentage}%**")
 
+
+@client.on(events.NewMessage(pattern="^/bots$"))
+async def list_bots(event):
+    # Sadece grup ve kanallarda çalıştır
+    if event.is_private:
+        await event.respond("Bu komut yalnızca grup ve kanallarda kullanılabilir.")
+        return
+
+    # "Bir saniye bekleyin..." mesajını gönder
+    await event.respond("BİR SANİYE...")
+
+    # 3 saniye bekle
+    await asyncio.sleep(3)
+
+    # Grup veya kanal katılımcılarını al
+    users = await client.get_participants(event.chat_id, limit=200)
+
+    bot_list = []
+    for user in users:
+        if user.bot:
+            bot_list.append(user)
+
+    # Bot listesini oluştur ve gönder
+    if bot_list:
+        bot_names = "\n".join([f"{user.first_name} ({user.username})" for user in bot_list])
+        await event.respond(f"Gruptaki Botlar Şunlar:\n{bot_names}")
+    else:
+        await event.respond("Bu grupta bot bulunmuyor.")
 
 @client.on(events.NewMessage(pattern='/slap'))
 async def slap(event):
