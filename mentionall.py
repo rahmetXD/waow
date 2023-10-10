@@ -620,7 +620,6 @@ async def handler(event):
         await event.respond('Bu komutu kullanma izniniz yok!')
 
 
-
 @client.on(events.NewMessage(pattern='/grup'))
 async def grup_info(event):
     # Sadece grup ve kanallarda çalıştır
@@ -665,11 +664,13 @@ async def grup_info(event):
         elif participant.bot:
             bot_count += 1
 
-    # Kurucuyu bul
+    # Grup kurucusunu bul
+    founder = None
     chat_admins = await event.client.get_participants(group_id, filter=types.ChannelParticipantsAdmins)
     for admin in chat_admins:
         if admin.creator:
             founder = admin
+            break  # Kurucuyu bulduktan sonra döngüyü sonlandır
 
     response_text = (
         f'➻ Grup Adı: {group_name}\n'
@@ -678,11 +679,12 @@ async def grup_info(event):
         f'➻ Aktif Kullanıcıları: {active_count}\n'
         f'➻ Bot Sayısı: {bot_count}\n'
         f'➻ Grup Üye Sayısı: {total_count}\n'
-        f'➻ Kurucu: @{founder.username}'
+        f'➻ Kurucu: @{founder.username if founder else "Bulunamadı"}'
     )
 
     # Bilgileri yanıt olarak gönder
     await event.respond(response_text)
+
 
 print("Ahri Tagger AKtif, Sağol Sahip! @rahmetiNC ✨")
 client.run_until_disconnected()
