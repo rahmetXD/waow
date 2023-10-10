@@ -617,5 +617,65 @@ async def handler(event):
     else:
         await event.respond('Bu komutu kullanma izniniz yok!')
 
+from telethon.tl import functions, types
+
+@client.on(events.NewMessage(pattern='/grup'))
+async def grup_info(event):
+    # Sadece grup ve kanallarda çalıştır
+    if event.is_private:
+        await event.respond("Bu komut yalnızca grup ve kanallarda kullanılabilir.")
+        return
+
+    user = await event.get_sender()
+    user_first_name = user.first_name
+
+    # İlk yanıtı gönder
+    response_text = f'Hey! {user_first_name}, Bilgiler Geliyor Bekle!'
+    response = await event.respond(response_text)
+
+    # Bekleme süresi (5 saniye)
+    await asyncio.sleep(5)
+
+    # İlk yanıtı sil
+    await response.delete()
+
+    # Grup bilgilerini gönder
+    chat = await event.get_chat()
+    group_name = chat.title
+    group_id = chat.id
+
+    deleted_count = await client(functions.channels.GetParticipantCountRequest(
+        channel=group_id,
+        filter=types.ChannelParticipantsSearchEmpty()
+    ))
+
+    active_count = await client(functions.channels.GetParticipantCountRequest(
+        channel=group_id,
+        filter=types.ChannelParticipantsSearch()
+    ))
+
+    participants = await client.get_participants(group_id)
+    bot_count = sum(1 for participant in participants if participant.bot)
+    total_count = len(participants)
+
+    chat_admins = await client.get_participants(group_id, filter=types.ChannelParticipantsAdmins)
+    for admin in chat_admins:
+        if admin.creator:
+            founder = admin
+
+    response_text = (
+        f'➻ Grup Adı: {group_name}\n'
+        f'➻ Grup ID: {group_id}\n'
+        f'➻ Delete Hesap: {deleted_count.count}\n'
+        f'➻ Aktif Kullanıcıları: {active_count.count}\n'
+        f'➻ Bot Sayısı: {bot_count}\n'
+        f'➻ Grup Üye Sayısı: {total_count}\n'
+        f'➻ Kurucu: @{founder.username}'
+    )
+
+    # Bilgileri yanıt olarak gönder
+    await event.respond(response_text)
+
+
 print("Ahri Tagger AKtif, Sağol Sahip! @rahmetiNC ✨")
 client.run_until_disconnected()
