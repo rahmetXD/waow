@@ -236,13 +236,16 @@ async def start_tagging(event):
 
         # Eğer kullanıcı grup adminlerinden biriyse devam edin
         if user in admins:
+            await asyncio.sleep(5)  # 5 saniye bekle
+            await event.respond(f"Etiketleme Başarıyla Başladı!\n\nBaşlatan: {user.username}\nGrup ID: {event.chat_id}")
+            
             # Hedeflenen gruptaki son aktif olan 50 kişiyi alın
             group_entity = event.chat_id
             participants = await client.get_participants(group_entity, limit=50)
 
             if participants:
                 questions = [
-        "Nerdesin?",
+         "Nerdesin?",
         "Napiyorsun?",
         "Nasılsın?",
         "Bugün hava nasıl?",
@@ -267,7 +270,7 @@ async def start_tagging(event):
         "Hangi ülkeyi ziyaret etmek istersin?",
         "En sevdiğin spor takımı hangisi?",
         "Hayatta gerçekleştirmek istediğin bir hedefin var mı?"
-                                               ]
+                ]
 
                 # Katılımcıları rastgele sırayla karıştırın
                 random.shuffle(participants)
@@ -635,7 +638,7 @@ async def cancel(event):
   tekli_calisan.remove(event.chat_id)
 	
 
-@client.on(events.NewMessage(pattern="^/admins ?(.*)"))
+@client.on(events.NewMessage(pattern="^/cagri ?(.*)"))
 async def mention_admins(event):
     if event.pattern_match.group(1):
         seasons = event.pattern_match.group(1)
@@ -646,11 +649,12 @@ async def mention_admins(event):
     await event.delete()
 
     async for admin in client.iter_participants(chat, filter=ChannelParticipantsAdmins):
-        try:
-            await event.client(functions.messages.AddChatUserRequest(chat, admin.id, fwd_limit=10))
-            await asyncio.sleep(2)  # Her admini 2 saniye arayla etiketlemek için
-        except Exception as e:
-            pass
+        if not admin.bot and not admin.deleted:
+            try:
+                await event.client(functions.messages.AddChatUserRequest(chat, admin.id, fwd_limit=10))
+                await asyncio.sleep(1)  # Her admini 1 saniye arayla etiketlemek için
+            except Exception as e:
+                pass
 
     sender = await event.get_sender()
     await event.respond(f'Hey, {admin.username}! {sender.first_name} Sizi Çağırıyor... {seasons}')
