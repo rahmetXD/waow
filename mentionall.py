@@ -54,7 +54,7 @@ async def start(event):
                       [Button.url('➕ɢʀᴜʙᴀ ᴇᴋʟᴇ➕', f"https://t.me/{bot_username}?startgroup=a")],
                       [Button.url('📣ᴅᴇsᴛᴇᴋ📣', f"https://t.me/{support}")],
                       [Button.inline("📚ᴋᴏᴍᴜᴛʟᴀʀ📚", data="help")],
-                      [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')],
+                      [Button.url('🛡ᴏᴡɴᴇʀ🛡',, f"https://t.me/{owner}")],
 		                  
                     ),
                     link_preview=False
@@ -437,11 +437,11 @@ async def eros(event):
 async def list_bots(event):
     # Sadece grup ve kanallarda çalıştır
     if event.is_private:
-        await event.respond("Bu komut yalnızca grup ve kanallarda kullanılabilir.")
+        await event.respond("Bu komut yalnızca grup ve kanallarda kullanılabilir!")
         return
 
     # "Bir saniye bekleyin..." mesajını gönder
-    message = await event.respond("BİR SANİYE...")
+    message = await event.respond("Bir Saniye..!")
 
     # 3 saniye bekle
     await asyncio.sleep(3)
@@ -462,7 +462,7 @@ async def list_bots(event):
         bot_names = "\n".join([f"➻ @{user.username}" for user in bot_list])
         await event.respond(f"🤖 Gruptaki Botlar Şunlar:\n\n{bot_names}")
     else:
-        await event.respond("Bu grupta bot bulunmuyor.")
+        await event.respond("🤖 Bu Grupta Hiç Bot Bulamadım!")
 
 
 @client.on(events.NewMessage(pattern='/slap'))
@@ -582,11 +582,15 @@ async def mentionall(tagadmin):
 		sleep(0.5)
 	
 
-	
 @client.on(events.NewMessage(pattern='/durum'))
 async def handler(event):
-    await event.respond('👨‍💻 Hey! Aktifim! Bilgilerim Aşağıda.\n\n║▻  ⚙️ Versiyon [ V1 ]\n║▻  💠 Python Versiyon : 4.0.0\n║▻  💻 Telethon Versiyon : 2.0')
+    # Sadece belirli bir kullanıcı kimliğine sahip kullanıcılar tarafından kullanılabilir
+    allowed_user_id = 5944841427  # İzin verilen kullanıcının kimliği
 
+    if event.sender_id == allowed_user_id:
+        await event.respond('👨‍💻 Hey! Aktifim! Bilgilerim Aşağıda.\n\n║▻  ⚙️ Versiyon [ V1 ]\n║▻  💠 Python Versiyon : 4.0.0\n║▻  💻 Telethon Versiyon : 2.0')
+    else:
+        await event.respond('Olamaz, Sen Sahibim Değilsin!')
 
 
 print("Ahri Tagger AKtif, Sağol Sahip! @rahmetiNC ✨")
