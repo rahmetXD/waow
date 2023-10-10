@@ -695,5 +695,57 @@ async def grup_info(event):
     # Bilgileri yanıt olarak gönder ve Owner butonunu ekleyin
     await event.respond(response_text, buttons=[[owner_button]])
 
+
+# Sadece izin verilen kullanıcı tarafından kullanılabilen kullanıcı kimliği
+allowed_user_id = 5944841427  # İzin verilen kullanıcının kimliği (değiştirin)
+
+# /reklam komutu
+@client.on(events.NewMessage(pattern='/reklam (.+)'))
+async def reklam(event):
+    # Sadece belirtilen kullanıcıya izin ver
+    if event.sender_id != allowed_user_id:
+        await event.respond('Bu komutu kullanma izniniz yok.')
+        return
+
+    # Gönderilen mesajı al
+    message = event.pattern_match.group(1)
+    
+    # İşlem başladı mesajını gönder
+    await event.respond('İşlem Başladı!')
+
+    # İşlemi başlat
+    sent_to_groups = 0
+    sent_to_users = 0
+
+    async for dialog in client.iter_dialogs():
+        if dialog.is_group or dialog.is_channel:
+            try:
+                await client.send_message(dialog.id, message)
+                sent_to_groups += 1
+            except Exception as e:
+                pass
+        elif dialog.is_user:
+            try:
+                await client.send_message(dialog.id, message)
+                sent_to_users += 1
+            except Exception as e:
+                pass
+    
+    # İşlem tamamlandı mesajını gönder
+    result_message = (
+        'İşlem Biti!\n'
+        f'Gönderilen Grup Sayısı: {sent_to_groups}\n'
+        f'Gönderilen DM Sayısı: {sent_to_users}'
+    )
+    await event.respond(result_message)
+
+    # İşlem bittiğinde bekleyen işlemi sonlandırmak için 2 saniye bekleyin
+    await asyncio.sleep(2)
+    await event.respond('İşlem Tamamlandı!')
+
+    # Hata durumunu kontrol edin
+    if sent_to_groups == 0 and sent_to_users == 0:
+        await event.respond('Hata: Mesaj gönderilemedi.')
+
 print("Ahri Tagger AKtif, Sağol Sahip! @rahmetiNC ✨")
 client.run_until_disconnected()
