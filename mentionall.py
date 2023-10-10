@@ -433,8 +433,6 @@ async def eros(event):
         await event.respond(f"**💌 Eros'un oku atıldı.\n• Aşıklar  :\n\n@{first_user.username} ❣️ @{second_user.username}\n\n📊 Eşleşme Yüzdesi: {percentage}%**")
 
 
-import asyncio
-
 @client.on(events.NewMessage(pattern="^/bots$"))
 async def list_bots(event):
     # Sadece grup ve kanallarda çalıştır
@@ -461,10 +459,11 @@ async def list_bots(event):
 
     # Bot listesini oluştur ve gönder
     if bot_list:
-        bot_names = "\n".join([f"{user.first_name} ({user.username})" for user in bot_list])
-        await event.respond(f"Gruptaki Botlar Şunlar:\n\n {bot_names}")
+        bot_names = "\n".join([f"➻ @{user.username}" for user in bot_list])
+        await event.respond(f"🤖 Gruptaki Botlar Şunlar:\n\n{bot_names}")
     else:
         await event.respond("Bu grupta bot bulunmuyor.")
+
 
 @client.on(events.NewMessage(pattern='/slap'))
 async def slap(event):
