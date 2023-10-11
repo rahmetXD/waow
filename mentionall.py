@@ -603,48 +603,50 @@ async def mentionall(event):
     return await event.respond("İşleme başlamam için mesaj yazmalısın!")
   
   if mode == "text_on_cmd":
-    tekli_calisan.append(event.chat_id)
-    usrnum = 0
-    usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
-      usrnum += 1
-      usrtxt += f"**[{usr.first_name}](tg://user?id={usr.id}) \n**"
-      if event.chat_id not in tekli_calisan:
-        await event.respond(
-            "Etiketleme İşlemi Durduruldu!",
-            buttons=[
-                [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
-            ]
-        )
-        return
-      if usrnum == 1:
-        await client.send_message(event.chat_id, f"{usrtxt} {msg}")
-        await asyncio.sleep(2)
+        tekli_calisan.append(event.chat_id)
         usrnum = 0
         usrtxt = ""
-        
-  
+        async for usr in client.iter_participants(event.chat_id):
+            if usr.bot or getattr(usr, 'deleted', False):
+                continue  # Botları ve silinmiş hesapları atla
+            usrnum += 1
+            usrtxt += f"**[{usr.first_name}](tg://user?id={usr.id}) \n**"
+            if event.chat_id not in tekli_calisan:
+                await event.respond(
+                    "📣 Etiketleme İşlemi Durduruldu!",
+                    buttons=[
+                        [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
+                    ]
+                )
+                return
+            if usrnum == 1:
+                await client.send_message(event.chat_id, f"⤇ {usrtxt}, {msg}!")
+                await asyncio.sleep(2)
+                usrnum = 0
+                usrtxt = ""
+
   if mode == "text_on_reply":
-    tekli_calisan.append(event.chat_id)
- 
-    usrnum = 0
-    usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
-      usrnum += 1
-      usrtxt += f"[{usr.first_name}](tg://user?id={usr.id}) \n"
-      if event.chat_id not in tekli_calisan:
-        await event.respond(
-            "Etiketleme İşlemi Durduruldu!",
-            buttons=[
-                [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
-            ]
-        )
-        return
-      if usrnum == 1:
-        await client.send_message(event.chat_id, usrtxt, reply_to=msg)
-        await asyncio.sleep(2)
+        tekli_calisan.append(event.chat_id)
         usrnum = 0
         usrtxt = ""
+        async for usr in client.iter_participants(event.chat_id):
+            if usr.bot or getattr(usr, 'deleted', False):
+                continue  # Botları ve silinmiş hesapları atla
+            usrnum += 1
+            usrtxt += f"[{usr.first_name}](tg://user?id={usr.id}) \n"
+            if event.chat_id not in tekli_calisan:
+                await event.respond(
+                    "📣 Etiketleme İşlemi Durduruldu!",
+                    buttons=[
+                        [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
+                    ]
+                )
+                return
+            if usrnum == 1:
+                await client.send_message(event.chat_id, usrtxt, reply_to=msg)
+                await asyncio.sleep(2)
+                usrnum = 0
+                usrtxt = ""
 
 @client.on(events.NewMessage(pattern='^(?i)/cancel'))
 async def cancel(event):
