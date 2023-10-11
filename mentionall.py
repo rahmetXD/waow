@@ -576,9 +576,6 @@ async def slap(event):
         await event.respond("Bu komutu kullanabilmek için bir mesaja yanıt vermelisiniz!")
 
 
-# İptal işlemi için yapılandırma alanının dışında 'total_tagged_users' değişkenini tanımlayın
-total_tagged_users = 0
-
 @client.on(events.NewMessage(pattern="^/tektag ?(.*)"))
 async def mentionall(event):
     global tekli_calisan
@@ -586,10 +583,11 @@ async def mentionall(event):
         return await event.respond("Bu komut gruplar ve kanallar için geçerlidir!")
 
     admins = []
-    async for admin in client.iter_participants(event.chat_id, filter=ChannelParticipantsAdmins):
+    async for admin in client.iter_participants(event.chat_id, filter=events.ChannelParticipantsAdmins):
         admins.append(admin.id)
-    if not event.sender_id in admins:
-        return await event.respond("Bu Komutu Sadece Yetkililer Kullana Bİlir!")
+
+    if event.sender_id not in admins:
+        return await event.respond("Bu Komutu Sadece Yetkililer Kullanabilir!")
 
     if event.pattern_match.group(1):
         mode = "text_on_cmd"
@@ -608,12 +606,10 @@ async def mentionall(event):
         tekli_calisan.append(event.chat_id)
         usrnum = 0
         usrtxt = ""
-        total_tagged_users = 0  # Etiketlenen kullanıcı sayısını hesaplamak için değişken
         async for usr in client.iter_participants(event.chat_id):
             usrnum += 1
             username = usr.username if usr.username else f"{usr.first_name} {usr.last_name}"
             usrtxt += f"⤇ [{username}](tg://user?id={usr.id}) , {msg}\n"
-            total_tagged_users += 1  # Her kullanıcıyı etiketlediğinizde sayacı artırın
             if event.chat_id not in tekli_calisan:
                 return
             if usrnum == 1:
@@ -626,12 +622,10 @@ async def mentionall(event):
         tekli_calisan.append(event.chat_id)
         usrnum = 0
         usrtxt = ""
-        total_tagged_users = 0  # Etiketlenen kullanıcı sayısını hesaplamak için değişken
         async for usr in client.iter_participants(event.chat_id):
             usrnum += 1
             username = usr.username if usr.username else f"{usr.first_name} {usr.last_name}"
             usrtxt += f"⤇ [{username}](tg://user?id={usr.id}) , {msg}\n"
-            total_tagged_users += 1  # Her kullanıcıyı etiketlediğinizde sayacı artırın
             if event.chat_id not in tekli_calisan:
                 return
             if usrnum == 1:
@@ -644,20 +638,17 @@ async def mentionall(event):
 async def cancel(event):
     global tekli_calisan
     chat_id = event.chat_id
+    canceled_chat = None
     if chat_id in tekli_calisan:
+        canceled_chat = chat_id
         tekli_calisan.remove(chat_id)
-        
-        total_tagged_users = 0  # Etiketlenen kullanıcı sayısını hesaplamak için değişken
 
-        # Etiketlenen kullanıcıları say
-        async for user in client.iter_participants(chat_id):
-            total_tagged_users += 1
-
+    if canceled_chat:
         canceled_by_user = event.sender_id  # Etiketlemeyi durduran kullanıcının ID'si
         canceled_by_user_info = await client.get_entity(canceled_by_user)
         canceled_by_username = canceled_by_user_info.username if canceled_by_user_info.username else f"{canceled_by_user_info.first_name} {canceled_by_user_info.last_name}"
-        
-        await event.respond(f"📣**Etiketleme İşlemi Başarıyla Durduruldu!**\n\n→ **Başlatan**: {event.sender_id}\n→ **Durduran Kullanıcı**: {canceled_by_username}\n→ **Toplam Etiketlenen Kullanıcı Sayısı**: {total_tagged_users}")
+        started_by_user_id = tekli_calisan[canceled_chat]
+        await event.respond(f"📣 **Etiketleme İşlemi Başarıyla Durduruldu!**\n\n➜ **Başlatan**: {started_by_user_id}\n➜ **Durduran Kullanıcı**: {canceled_by_username}")
 
 
 
