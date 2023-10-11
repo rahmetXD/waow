@@ -609,10 +609,21 @@ async def mentionall(event):
     async for usr in client.iter_participants(event.chat_id):
       usrnum += 1
       usrtxt += f"{usr.first_name}](tg://user?id={usr.id})"
-   if event.chat_id not in tekli_calisan:
+if event.chat_id not in tekli_calisan:
     baslatan_user = await client.get_entity(event.sender_id)
     durduran_user = await client.get_entity(event.chat_id)
-    await event.respond(f"Etiketleme İşlemi Durduruldu!\n\nBaşlatan Kullanıcı: {baslatan_user.id} ({baslatan_user.username})\nDurduran Kullanıcı: {durduran_user.id} ({durduran_user.username})")
+
+    # Emoji eklemek için Unicode emoji kodlarını kullanabilirsiniz.
+    emoji_start = "\U0001F680"  # Roket emoji
+    emoji_stop = "\U0001F6D1"   # Dur işareti emoji
+
+    message = (
+        f"{emoji_stop} Etiketleme İşlemi Durduruldu {emoji_stop}\n\n"
+        f"{emoji_start} Başlatan Kullanıcı: {baslatan_user.id} ({baslatan_user.username}) {emoji_start}\n"
+        f"{emoji_stop} Durduran Kullanıcı: {durduran_user.id} ({durduran_user.username}) {emoji_stop}"
+    )
+
+    await event.respond(message)
     return
       if usrnum == 1:
         await client.send_message(event.chat_id, f"⤇ {usrtxt}, {msg}")
