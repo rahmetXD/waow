@@ -575,6 +575,7 @@ async def slap(event):
     else:
         await event.respond("Bu komutu kullanabilmek için bir mesaja yanıt vermelisiniz!")
 
+
 @client.on(events.NewMessage(pattern="^/tektag ?(.*)"))
 async def mentionall(event):
     global tekli_calisan
@@ -606,12 +607,12 @@ async def mentionall(event):
         usrtxt = ""
         async for usr in client.iter_participants(event.chat_id):
             usrnum += 1
-            usrtxt += f"⤇ **[{usr.first_name}](tg://user?id={usr.id})\n**"
+            username = usr.username if usr.username else f"{usr.first_name} {usr.last_name}"
+            usrtxt += f"⤇ [{username}](tg://user?id={usr.id}) , {msg}"
             if event.chat_id not in tekli_calisan:
-                await event.respond("Etiketleme İşlemi Durduruldu!")
                 return
             if usrnum == 1:
-                await client.send_message(event.chat_id, f" ⤇ {usrtxt}\n\n→ **{usrnum} Kullanıcı Etiketlendi**\n→ **Başlatan**: {event.sender_id}\n\n{msg}")
+                await client.send_message(event.chat_id, usrtxt)
                 await asyncio.sleep(2)
                 usrnum = 0
                 usrtxt = ""
@@ -623,15 +624,16 @@ async def mentionall(event):
         usrtxt = ""
         async for usr in client.iter_participants(event.chat_id):
             usrnum += 1
-            usrtxt += f"[{usr.first_name}](tg://user?id={usr.id})\n"
+            username = usr.username if usr.username else f"{usr.first_name} {usr.last_name}"
+            usrtxt += f"⤇ [{username}](tg://user?id={usr.id}) , {msg}"
             if event.chat_id not in tekli_calisan:
-                await event.respond("Etiketleme İşlemi Durduruldu!")
                 return
             if usrnum == 1:
                 await client.send_message(event.chat_id, usrtxt, reply_to=msg)
                 await asyncio.sleep(2)
                 usrnum = 0
                 usrtxt = ""
+
 
 @client.on(events.NewMessage(pattern='^(?i)/cancel'))
 async def cancel(event):
@@ -686,7 +688,7 @@ async def restart_bot(event):
     # Eğer komutu kullanan kişi bir grup adminiyse
     if await is_group_admin(user.id, chat) and not restarting:
         restarting = True  # Botun yeniden başlatıldığını belirt
-        await event.respond("⏳ Bot Yeniden Başlatılıyor, Bekleyiniz! ")
+        message = await event.respond("⏳ Bot Yeniden Başlatılıyor, Bekleyiniz!")
 
         await asyncio.sleep(10)  # 10 saniye bekle
 
@@ -701,7 +703,9 @@ async def restart_bot(event):
         # Botun yeniden başlatma süresini hesapla
         restart_duration = round(time.time() - start_time, 2)
 
-        await event.respond(f"Bot Başarıyla Yeniden Başlatıldı!\n\n➜ Sunucu Hızı: {server_speed}\n➜ Botu Yeniden Başlatan: {user.first_name}\n➜ Cevap Süresi: {restart_duration} saniye")
+        await message.delete()  # "Bot Yeniden Başlatılıyor" mesajını sil
+        info_message = f"🎉 Bot Başarıyla Yeniden Başlatıldı!\n\n➜ Sunucu Hızı: {server_speed}\n➜ Botu Yeniden Başlatan: {user.first_name}\n➜ Cevap Süresi: {restart_duration} saniye"
+        await event.respond(info_message)
 
         restarting = False  # Botun yeniden başlatıldığını geri al
         # Botu yeniden başlatmak için mevcut işlemi sonlandırmadan önce daha güvenli bir yöntem kullanabilirsiniz
@@ -726,6 +730,7 @@ async def is_group_admin(user_id, chat):
     except Exception as e:
         pass
     return False
+
 
 
 	
