@@ -576,6 +576,9 @@ async def slap(event):
         await event.respond("Bu komutu kullanabilmek için bir mesaja yanıt vermelisiniz!")
 
 
+# İptal işlemi için yapılandırma alanının dışında 'total_tagged_users' değişkenini tanımlayın
+total_tagged_users = 0
+
 @client.on(events.NewMessage(pattern="^/tektag ?(.*)"))
 async def mentionall(event):
     global tekli_calisan
@@ -651,7 +654,6 @@ async def cancel(event):
         canceled_by_user_info = await client.get_entity(canceled_by_user)
         canceled_by_username = canceled_by_user_info.username if canceled_by_user_info.username else f"{canceled_by_user_info.first_name} {canceled_by_user_info.last_name}"
         await event.respond(f"📣**Etiketleme İşlemi Başarıyla Durduruldu!**\n\n→ **Başlatan**: {event.sender_id}\n→ **Durduran Kullanıcı**: {canceled_by_username}\n→ **Toplam Etiketlenen Kullanıcı Sayısı**: {total_tagged_users}")
-
 
 
 
