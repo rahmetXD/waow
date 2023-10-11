@@ -594,7 +594,7 @@ async def mentionall(event):
     elif event.reply_to_msg_id:
         mode = "text_on_reply"
         msg = event.reply_to_msg_id
-        if msg == None:
+        if msg is None:
             return await event.respond("Önceki mesajları etiket işlemi için kullanamıyorum.")
     elif event.pattern_match.group(1) and event.reply_to_msg_id:
         return await event.respond("Başlamak için mesaj yazmalısın!")
@@ -605,10 +605,12 @@ async def mentionall(event):
         tekli_calisan.append(event.chat_id)
         usrnum = 0
         usrtxt = ""
+        total_tagged_users = 0  # Etiketlenen kullanıcı sayısını hesaplamak için değişken
         async for usr in client.iter_participants(event.chat_id):
             usrnum += 1
             username = usr.username if usr.username else f"{usr.first_name} {usr.last_name}"
-            usrtxt += f"⤇ [{username}](tg://user?id={usr.id}) , {msg}"
+            usrtxt += f"⤇ [{username}](tg://user?id={usr.id}) , {msg}\n"
+            total_tagged_users += 1  # Her kullanıcıyı etiketlediğinizde sayacı artırın
             if event.chat_id not in tekli_calisan:
                 return
             if usrnum == 1:
@@ -619,13 +621,14 @@ async def mentionall(event):
 
     if mode == "text_on_reply":
         tekli_calisan.append(event.chat_id)
-
         usrnum = 0
         usrtxt = ""
+        total_tagged_users = 0  # Etiketlenen kullanıcı sayısını hesaplamak için değişken
         async for usr in client.iter_participants(event.chat_id):
             usrnum += 1
             username = usr.username if usr.username else f"{usr.first_name} {usr.last_name}"
-            usrtxt += f"⤇ [{username}](tg://user?id={usr.id}) , {msg}"
+            usrtxt += f"⤇ [{username}](tg://user?id={usr.id}) , {msg}\n"
+            total_tagged_users += 1  # Her kullanıcıyı etiketlediğinizde sayacı artırın
             if event.chat_id not in tekli_calisan:
                 return
             if usrnum == 1:
@@ -633,7 +636,6 @@ async def mentionall(event):
                 await asyncio.sleep(2)
                 usrnum = 0
                 usrtxt = ""
-
 
 @client.on(events.NewMessage(pattern='^(?i)/cancel'))
 async def cancel(event):
@@ -645,13 +647,10 @@ async def cancel(event):
         tekli_calisan.remove(chat_id)
 
     if canceled_chat:
-        total_tagged_users = 0  # Etiketlenen kullanıcı sayısını hesaplayın
         canceled_by_user = event.sender_id  # Etiketlemeyi durduran kullanıcının ID'si
         canceled_by_user_info = await client.get_entity(canceled_by_user)
         canceled_by_username = canceled_by_user_info.username if canceled_by_user_info.username else f"{canceled_by_user_info.first_name} {canceled_by_user_info.last_name}"
-        await event.respond(f"📣**Etiketleme İşlemi Başarıyla Durduruldu!**\n\n→ **Etiketlenen Kullanıcı Sayısı**: {total_tagged_users}\n→ **Başlatan**: {event.sender_id}\n→ **Durduran Kullanıcı**: {canceled_by_username}")
-    else:
-        await event.respond("Henüz etiketleme işlemi başlatılmamış!")
+        await event.respond(f"📣**Etiketleme İşlemi Başarıyla Durduruldu!**\n\n→ **Başlatan**: {event.sender_id}\n→ **Durduran Kullanıcı**: {canceled_by_username}\n→ **Toplam Etiketlenen Kullanıcı Sayısı**: {total_tagged_users}")
 
 
 
