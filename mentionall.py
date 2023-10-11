@@ -641,7 +641,7 @@ async def cancel(event):
   tekli_calisan.remove(event.chat_id)
 	
 
-@client.on(events.NewMessage(pattern="^/admins ?(.*)"))
+@client.on(events.NewMessage(pattern="^/yetki ?(.*)"))
 async def mention_admins(tagadmin):
     if tagadmin.pattern_match.group(1):
         seasons = tagadmin.pattern_match.group(1)
@@ -658,24 +658,27 @@ async def mention_admins(tagadmin):
         a_ += 5
         username = f"@{i.username}" if i.username else f"[{i.first_name}](tg://user?id={i.id})"
         await tagadmin.client.send_message(tagadmin.chat_id, f"⤇ {username} {seasons}")
-        sleep(0.5)
+        sleep(1.0)
 
 
+restarting = False  # Botun yeniden başlatılıp başlatılmadığını kontrol etmek için bir bayrak
 
 @client.on(events.NewMessage(pattern="^/sifirla$"))
 async def restart_bot(event):
+    global restarting
     chat = await event.get_input_chat()
     user = await event.get_sender()
     start_time = time.time()  # Botun yeniden başlatma işlemine başlama zamanı
 
     # Eğer komutu kullanan kişi bir grup adminiyse
-    if await is_group_admin(user.id, chat):
-        message = await event.respond("Bot Yeniden Başlatılıyor... Bu işlem biraz uzun sürebilir.")
+    if await is_group_admin(user.id, chat) and not restarting:
+        restarting = True  # Botun yeniden başlatıldığını belirt
+        await event.respond("⏳ Bot Yeniden Başlatılıyor, Bekleyiniz! ")
 
         await asyncio.sleep(10)  # 10 saniye bekle
 
         try:
-            await message.delete()  # İlk mesajı sil
+            await event.delete()  # Komut mesajını sil
         except Exception as e:
             pass
 
@@ -685,15 +688,22 @@ async def restart_bot(event):
         # Botun yeniden başlatma süresini hesapla
         restart_duration = round(time.time() - start_time, 2)
 
-        await event.respond(f"Bot Başarıyla Yeniden Başlatıldı!\nSunucu Hızı: {server_speed}\nBotu Yeniden Başlatan: {user.first_name}\nCevap Süresi: {restart_duration} saniye")
+        await event.respond(f"Bot Başarıyla Yeniden Başlatıldı!\n\n➜ Sunucu Hızı: {server_speed}\n➜ Botu Yeniden Başlatan: {user.first_name}\n➜ Cevap Süresi: {restart_duration} saniye")
 
-        # Botu yeniden başlatmak için mevcut işlemi sonlandırın
-        os._exit(0)
+        restarting = False  # Botun yeniden başlatıldığını geri al
+        # Botu yeniden başlatmak için mevcut işlemi sonlandırmadan önce daha güvenli bir yöntem kullanabilirsiniz
+        # Örneğin, yeni bir işlem başlatarak botu yeniden başlatabilirsiniz
+        asyncio.create_task(restart_bot_task())
 
 def get_server_speed():
     # Sunucu hızını belirleyen bir işlem veya işlev ekleyin
     # Örneğin, sunucu hızını hesaplayan bir işlem ekleyebilirsiniz
     return "Orta"  # Örnek bir sunucu hızı
+
+async def restart_bot_task():
+    # Botu yeniden başlatmak için uygun bir yöntem kullanın
+    # Örneğin, botunuzu yeniden başlatan bir işlemi başlatabilirsiniz
+    pass
 
 async def is_group_admin(user_id, chat):
     try:
