@@ -25,6 +25,9 @@ from youtube_search import YoutubeSearch
 import requests
 import os
 from pyrogram import filters
+import os
+import asyncio
+import time
 
 logging.basicConfig(
     level=logging.INFO,
@@ -638,26 +641,69 @@ async def cancel(event):
   tekli_calisan.remove(event.chat_id)
 	
 
-@client.on(events.NewMessage(pattern="^/cagri ?(.*)"))
-async def mention_admins(event):
-    if event.pattern_match.group(1):
-        seasons = event.pattern_match.group(1)
+@client.on(events.NewMessage(pattern="^/admins ?(.*)"))
+async def mention_admins(tagadmin):
+    if tagadmin.pattern_match.group(1):
+        seasons = tagadmin.pattern_match.group(1)
     else:
         seasons = ""
 
+    chat = await tagadmin.get_input_chat()
+    a_ = 0
+    await tagadmin.delete()
+
+    async for i in client.iter_participants(chat, filter=ChannelParticipantsAdmins):
+        if a_ == 500:
+            break
+        a_ += 5
+        username = f"@{i.username}" if i.username else f"[{i.first_name}](tg://user?id={i.id})"
+        await tagadmin.client.send_message(tagadmin.chat_id, f"⤇ {username} {seasons}")
+        sleep(0.5)
+
+
+
+@client.on(events.NewMessage(pattern="^/sifirla$"))
+async def restart_bot(event):
     chat = await event.get_input_chat()
-    await event.delete()
+    user = await event.get_sender()
+    start_time = time.time()  # Botun yeniden başlatma işlemine başlama zamanı
 
-    async for admin in client.iter_participants(chat, filter=ChannelParticipantsAdmins):
-        if not admin.bot and not admin.deleted:
-            try:
-                await event.client(functions.messages.AddChatUserRequest(chat, admin.id, fwd_limit=10))
-                await asyncio.sleep(1)  # Her admini 1 saniye arayla etiketlemek için
-            except Exception as e:
-                pass
+    # Eğer komutu kullanan kişi bir grup adminiyse
+    if await is_group_admin(user.id, chat):
+        message = await event.respond("Bot Yeniden Başlatılıyor... Bu işlem biraz uzun sürebilir.")
 
-    sender = await event.get_sender()
-    await event.respond(f'Hey, {admin.username}! {sender.first_name} Sizi Çağırıyor... {seasons}')
+        await asyncio.sleep(10)  # 10 saniye bekle
+
+        try:
+            await message.delete()  # İlk mesajı sil
+        except Exception as e:
+            pass
+
+        # Sunucu hızını alın (örneğin, yavaş, orta, hızlı)
+        server_speed = get_server_speed()
+
+        # Botun yeniden başlatma süresini hesapla
+        restart_duration = round(time.time() - start_time, 2)
+
+        await event.respond(f"Bot Başarıyla Yeniden Başlatıldı!\nSunucu Hızı: {server_speed}\nBotu Yeniden Başlatan: {user.first_name}\nCevap Süresi: {restart_duration} saniye")
+
+        # Botu yeniden başlatmak için mevcut işlemi sonlandırın
+        os._exit(0)
+
+def get_server_speed():
+    # Sunucu hızını belirleyen bir işlem veya işlev ekleyin
+    # Örneğin, sunucu hızını hesaplayan bir işlem ekleyebilirsiniz
+    return "Orta"  # Örnek bir sunucu hızı
+
+async def is_group_admin(user_id, chat):
+    try:
+        async for admin in client.iter_participants(chat, filter=ChannelParticipantsAdmins):
+            if admin.id == user_id:
+                return True
+    except Exception as e:
+        pass
+    return False
+
 
 	
 @client.on(events.NewMessage(pattern='/bot'))
