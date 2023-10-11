@@ -596,7 +596,7 @@ async def mentionall(event):
     mode = "text_on_reply"
     msg = event.reply_to_msg_id
     if msg == None:
-        return await event.respond("Önceki mesajları etiket işlemi için kullanamıyorum.")
+        return await event.respond("Önceki mesajları etiket işlemi için kullanamıyorum!")
   elif event.pattern_match.group(1) and event.reply_to_msg_id:
     return await event.respond("Başlamak için mesaj yazmalısın!")
   else:
@@ -608,19 +608,17 @@ async def mentionall(event):
     usrtxt = ""
     async for usr in client.iter_participants(event.chat_id):
       usrnum += 1
-      usrtxt += f"{usr.first_name}](tg://user?id={usr.id})"
-if event.chat_id not in tekli_calisan:
+      usrtxt += f"**[{usr.first_name}](tg://user?id={usr.id}) \n**"
+      if event.chat_id not in tekli_calisan:
         await event.respond(
             "Etiketleme İşlemi Durduruldu!",
             buttons=[
                 [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
             ]
         )
-    return
-    await event.respond(message)
-    return
+        return
       if usrnum == 1:
-        await client.send_message(event.chat_id, f"⤇ {usrtxt}, {msg}")
+        await client.send_message(event.chat_id, f"{usrtxt} {msg}")
         await asyncio.sleep(2)
         usrnum = 0
         usrtxt = ""
@@ -633,9 +631,14 @@ if event.chat_id not in tekli_calisan:
     usrtxt = ""
     async for usr in client.iter_participants(event.chat_id):
       usrnum += 1
-      usrtxt += f"⤇ [{usr.first_name}](tg://user?id={usr.id})\n"
+      usrtxt += f"[{usr.first_name}](tg://user?id={usr.id}) \n"
       if event.chat_id not in tekli_calisan:
-        await event.respond("Etiketleme İşlemi Durduruldu!")
+        await event.respond(
+            "Etiketleme İşlemi Durduruldu!",
+            buttons=[
+                [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
+            ]
+        )
         return
       if usrnum == 1:
         await client.send_message(event.chat_id, usrtxt, reply_to=msg)
@@ -647,7 +650,6 @@ if event.chat_id not in tekli_calisan:
 async def cancel(event):
   global tekli_calisan
   tekli_calisan.remove(event.chat_id)
-	
 
 
 @client.on(events.NewMessage(pattern="^/yetki ?(.*)"))
