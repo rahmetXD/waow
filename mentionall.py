@@ -579,78 +579,81 @@ async def slap(event):
 
 @client.on(events.NewMessage(pattern="^/tektag ?(.*)"))
 async def mentionall(event):
-    global tekli_calisan
-    if event.is_private:
-        return await event.respond("Bu komut gruplar ve kanallar için geçerlidir!")
-
-    admins = []
-    async for admin in client.iter_participants(event.chat_id, filter=events.ChannelParticipantsAdmins):
-        admins.append(admin.id)
-
-    if event.sender_id not in admins:
-        return await event.respond("Bu Komutu Sadece Yetkililer Kullanabilir!")
-
-    if event.pattern_match.group(1):
-        mode = "text_on_cmd"
-        msg = event.pattern_match.group(1)
-    elif event.reply_to_msg_id:
-        mode = "text_on_reply"
-        msg = event.reply_to_msg_id
-        if msg is None:
-            return await event.respond("Önceki mesajları etiket işlemi için kullanamıyorum.")
-    elif event.pattern_match.group(1) and event.reply_to_msg_id:
-        return await event.respond("Başlamak için mesaj yazmalısın!")
-    else:
-        return await event.respond("İşleme başlamam için mesaj yazmalısın!")
-
-    if mode == "text_on_cmd":
-        tekli_calisan.append(event.chat_id)
+  global tekli_calisan
+  if event.is_private:
+    return await event.respond("Bu komut gruplar ve kanallar için geçerlidir!")
+  
+  admins = []
+  async for admin in client.iter_participants(event.chat_id, filter=ChannelParticipantsAdmins):
+    admins.append(admin.id)
+  if not event.sender_id in admins:
+    return await event.respond("Bu Komutu Sadece Yetkililer Kullana Bİlir!")
+  
+  if event.pattern_match.group(1):
+    mode = "text_on_cmd"
+    msg = event.pattern_match.group(1)
+  elif event.reply_to_msg_id:
+    mode = "text_on_reply"
+    msg = event.reply_to_msg_id
+    if msg == None:
+        return await event.respond("Önceki mesajları etiket işlemi için kullanamıyorum.")
+  elif event.pattern_match.group(1) and event.reply_to_msg_id:
+    return await event.respond("Başlamak için mesaj yazmalısın!")
+  else:
+    return await event.respond("İşleme başlamam için mesaj yazmalısın!")
+  
+  if mode == "text_on_cmd":
+    tekli_calisan.append(event.chat_id)
+    usrnum = 0
+    usrtxt = ""
+    async for usr in client.iter_participants(event.chat_id):
+      usrnum += 1
+      usrtxt += f"⤇ [{usr.first_name}](tg://user?id={usr.id})"
+     if event.chat_id not in tekli_calisan:
+    baslatan_user = await client.get_entity(event.sender_id)
+    durduran_user = await client.get_entity(event.chat_id)
+    
+    # Emoji eklemek için Unicode emoji kodlarını kullanabilirsiniz.
+    emoji_start = "\U0001F680"  # Roket emoji
+    emoji_stop = "\U0001F6D1"   # Dur işareti emoji
+    
+    message = (
+        f"{emoji_stop} Etiketleme İşlemi Durduruldu {emoji_stop}\n\n"
+        f"{emoji_start} Başlatan Kullanıcı: {baslatan_user.id} ({baslatan_user.username}) {emoji_start}\n"
+        f"{emoji_stop} Durduran Kullanıcı: {durduran_user.id} ({durduran_user.username}) {emoji_stop}"
+    )
+    
+    await event.respond(message)
+    return
+      if usrnum == 1:
+        await client.send_message(event.chat_id, f"⤇ {usrtxt}, {msg}")
+        await asyncio.sleep(2)
         usrnum = 0
         usrtxt = ""
-        async for usr in client.iter_participants(event.chat_id):
-            usrnum += 1
-            username = usr.username if usr.username else f"{usr.first_name} {usr.last_name}"
-            usrtxt += f"⤇ [{username}](tg://user?id={usr.id}) , {msg}\n"
-            if event.chat_id not in tekli_calisan:
-                return
-            if usrnum == 1:
-                await client.send_message(event.chat_id, usrtxt)
-                await asyncio.sleep(2)
-                usrnum = 0
-                usrtxt = ""
-
-    if mode == "text_on_reply":
-        tekli_calisan.append(event.chat_id)
+        
+  
+  if mode == "text_on_reply":
+    tekli_calisan.append(event.chat_id)
+ 
+    usrnum = 0
+    usrtxt = ""
+    async for usr in client.iter_participants(event.chat_id):
+      usrnum += 1
+      usrtxt += f"⤇ [{usr.first_name}](tg://user?id={usr.id})\n"
+      if event.chat_id not in tekli_calisan:
+        await event.respond("Etiketleme İşlemi Durduruldu!")
+        return
+      if usrnum == 1:
+        await client.send_message(event.chat_id, usrtxt, reply_to=msg)
+        await asyncio.sleep(2)
         usrnum = 0
         usrtxt = ""
-        async for usr in client.iter_participants(event.chat_id):
-            usrnum += 1
-            username = usr.username if usr.username else f"{usr.first_name} {usr.last_name}"
-            usrtxt += f"⤇ [{username}](tg://user?id={usr.id}) , {msg}\n"
-            if event.chat_id not in tekli_calisan:
-                return
-            if usrnum == 1:
-                await client.send_message(event.chat_id, usrtxt, reply_to=msg)
-                await asyncio.sleep(2)
-                usrnum = 0
-                usrtxt = ""
 
 @client.on(events.NewMessage(pattern='^(?i)/cancel'))
 async def cancel(event):
-    global tekli_calisan
-    chat_id = event.chat_id
-    canceled_chat = None
-    if chat_id in tekli_calisan:
-        canceled_chat = chat_id
-        tekli_calisan.remove(chat_id)
-
-    if canceled_chat:
-        canceled_by_user = event.sender_id  # Etiketlemeyi durduran kullanıcının ID'si
-        canceled_by_user_info = await client.get_entity(canceled_by_user)
-        canceled_by_username = canceled_by_user_info.username if canceled_by_user_info.username else f"{canceled_by_user_info.first_name} {canceled_by_user_info.last_name}"
-        started_by_user_id = tekli_calisan[canceled_chat]
-        await event.respond(f"📣 **Etiketleme İşlemi Başarıyla Durduruldu!**\n\n➜ **Başlatan**: {started_by_user_id}\n➜ **Durduran Kullanıcı**: {canceled_by_username}")
-
+  global tekli_calisan
+  tekli_calisan.remove(event.chat_id)
+	
 
 
 @client.on(events.NewMessage(pattern="^/yetki ?(.*)"))
