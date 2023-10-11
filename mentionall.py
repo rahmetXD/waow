@@ -650,11 +650,16 @@ async def cancel(event):
         tekli_calisan.remove(chat_id)
 
     if canceled_chat:
+        total_tagged_users = 0  # Etiketlenen kullanıcı sayısını hesaplayacak değişkeni sıfırla
         canceled_by_user = event.sender_id  # Etiketlemeyi durduran kullanıcının ID'si
         canceled_by_user_info = await client.get_entity(canceled_by_user)
         canceled_by_username = canceled_by_user_info.username if canceled_by_user_info.username else f"{canceled_by_user_info.first_name} {canceled_by_user_info.last_name}"
-        await event.respond(f"📣**Etiketleme İşlemi Başarıyla Durduruldu!**\n\n→ **Başlatan**: {event.sender_id}\n→ **Durduran Kullanıcı**: {canceled_by_username}\n→ **Toplam Etiketlenen Kullanıcı Sayısı**: {total_tagged_users}")
+        
+        # Etiketlenen kullanıcıları say
+        async for user in client.iter_participants(canceled_chat):
+            total_tagged_users += 1
 
+        await event.respond(f"📣**Etiketleme İşlemi Başarıyla Durduruldu!**\n\n→ **Başlatan**: {event.sender_id}\n→ **Durduran Kullanıcı**: {canceled_by_username}\n→ **Toplam Etiketlenen Kullanıcı Sayısı**: {total_tagged_users}")
 
 
 @client.on(events.NewMessage(pattern="^/yetki ?(.*)"))
