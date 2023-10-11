@@ -657,7 +657,7 @@ async def cancel(event):
         canceled_by_user_info = await client.get_entity(canceled_by_user)
         canceled_by_username = canceled_by_user_info.username if canceled_by_user_info.username else f"{canceled_by_user_info.first_name} {canceled_by_user_info.last_name}"
         
-        await event.respond(f"📣**Etiketleme İşlemi Başarıyla Durduruldu!**\n\n→ **Başlatan**: {event.sender_id}\n→ **Durduran Kullanıcı**: {canceled_by_username}\n→ **Toplam Etiketlenen Kullanıcı Sayısı**: {total_tagged_users}"
+        await event.respond(f"📣**Etiketleme İşlemi Başarıyla Durduruldu!**\n\n→ **Başlatan**: {event.sender_id}\n→ **Durduran Kullanıcı**: {canceled_by_username}\n→ **Toplam Etiketlenen Kullanıcı Sayısı**: {total_tagged_users}")
 
 
 
