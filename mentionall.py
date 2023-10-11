@@ -28,6 +28,7 @@ from pyrogram import filters
 import os
 import asyncio
 import time
+from telethon.sync import TelegramClient, events
 
 logging.basicConfig(
     level=logging.INFO,
