@@ -610,7 +610,7 @@ async def mentionall(event):
             if usr.bot or getattr(usr, 'deleted', False):
                 continue  # Botları ve silinmiş hesapları atla
             usrnum += 1
-            usrtxt += f"**[{usr.first_name}](tg://user?id={usr.id})**"
+            usrtxt += f"**[{usr.first_name}](tg://user?id={usr.id}\n)**"
             if event.chat_id not in tekli_calisan:
                 await event.respond(
                     "📣 Etiketleme İşlemi Durduruldu!",
@@ -620,7 +620,7 @@ async def mentionall(event):
                 )
                 return
             if usrnum == 1:
-                await client.send_message(event.chat_id, f"⤇ {usrtxt}, {msg}!")
+                await client.send_message(event.chat_id, f"⤇ {usrtxt},{msg}!")
                 await asyncio.sleep(2)
                 usrnum = 0
                 usrtxt = ""
@@ -633,7 +633,7 @@ async def mentionall(event):
             if usr.bot or getattr(usr, 'deleted', False):
                 continue  # Botları ve silinmiş hesapları atla
             usrnum += 1
-            usrtxt += f"[{usr.first_name}](tg://user?id={usr.id})"
+            usrtxt += f"[{usr.first_name}](tg://user?id={usr.id}\n)"
             if event.chat_id not in tekli_calisan:
                 await event.respond(
                     "📣 Etiketleme İşlemi Durduruldu!",
