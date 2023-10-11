@@ -442,12 +442,12 @@ async def mentionall(event):
     usrtxt = ""
     async for usr in client.iter_participants(event.chat_id):
       usrnum += 1
-      usrtxt += f"👥 - [{usr.first_name}](tg://user?id={usr.id}) \n"
+      usrtxt += f"⤇ - [{usr.first_name}](tg://user?id={usr.id}) \n"
       if event.chat_id not in anlik_calisan:
         await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
         return
       if usrnum == 5:
-        await client.send_message(event.chat_id, f"{usrtxt}\n\n{msg}")
+        await client.send_message(event.chat_id, f"{usrtxt}\n\n**{msg}**")
         await asyncio.sleep(2)
         usrnum = 0
         usrtxt = ""
@@ -460,7 +460,7 @@ async def mentionall(event):
     usrtxt = ""
     async for usr in client.iter_participants(event.chat_id):
       usrnum += 1
-      usrtxt += f"👥 - [{usr.first_name}](tg://user?id={usr.id}) \n"
+      usrtxt += f"⤇ - [{usr.first_name}](tg://user?id={usr.id}) \n"
       if event.chat_id not in anlik_calisan:
         await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
         return
@@ -575,71 +575,84 @@ async def slap(event):
     else:
         await event.respond("Bu komutu kullanabilmek için bir mesaja yanıt vermelisiniz!")
 
-
 @client.on(events.NewMessage(pattern="^/tektag ?(.*)"))
 async def mentionall(event):
-  global tekli_calisan
-  if event.is_private:
-    return await event.respond("Bu komut gruplar ve kanallar için geçerlidir!")
-  
-  admins = []
-  async for admin in client.iter_participants(event.chat_id, filter=ChannelParticipantsAdmins):
-    admins.append(admin.id)
-  if not event.sender_id in admins:
-    return await event.respond("Bu Komutu Sadece Yetkililer Kullana Bİlir!")
-  
-  if event.pattern_match.group(1):
-    mode = "text_on_cmd"
-    msg = event.pattern_match.group(1)
-  elif event.reply_to_msg_id:
-    mode = "text_on_reply"
-    msg = event.reply_to_msg_id
-    if msg == None:
-        return await event.respond("Önceki mesajları etiket işlemi için kullanamıyorum.")
-  elif event.pattern_match.group(1) and event.reply_to_msg_id:
-    return await event.respond("Başlamak için mesaj yazmalısın!")
-  else:
-    return await event.respond("İşleme başlamam için mesaj yazmalısın!")
-  
-  if mode == "text_on_cmd":
-    tekli_calisan.append(event.chat_id)
-    usrnum = 0
-    usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
-      usrnum += 1
-      usrtxt += f"**[{usr.first_name}](tg://user?id={usr.id}) \n**"
-      if event.chat_id not in tekli_calisan:
-        await event.respond("Etiketleme İşlemi Durduruldu!")
-        return
-      if usrnum == 1:
-        await client.send_message(event.chat_id, f"{usrtxt} {msg}")
-        await asyncio.sleep(2)
+    global tekli_calisan
+    if event.is_private:
+        return await event.respond("Bu komut gruplar ve kanallar için geçerlidir!")
+
+    admins = []
+    async for admin in client.iter_participants(event.chat_id, filter=ChannelParticipantsAdmins):
+        admins.append(admin.id)
+    if not event.sender_id in admins:
+        return await event.respond("Bu Komutu Sadece Yetkililer Kullana Bİlir!")
+
+    if event.pattern_match.group(1):
+        mode = "text_on_cmd"
+        msg = event.pattern_match.group(1)
+    elif event.reply_to_msg_id:
+        mode = "text_on_reply"
+        msg = event.reply_to_msg_id
+        if msg == None:
+            return await event.respond("Önceki mesajları etiket işlemi için kullanamıyorum.")
+    elif event.pattern_match.group(1) and event.reply_to_msg_id:
+        return await event.respond("Başlamak için mesaj yazmalısın!")
+    else:
+        return await event.respond("İşleme başlamam için mesaj yazmalısın!")
+
+    if mode == "text_on_cmd":
+        tekli_calisan.append(event.chat_id)
         usrnum = 0
         usrtxt = ""
-        
-  
-  if mode == "text_on_reply":
-    tekli_calisan.append(event.chat_id)
- 
-    usrnum = 0
-    usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
-      usrnum += 1
-      usrtxt += f"[{usr.first_name}](tg://user?id={usr.id}) \n"
-      if event.chat_id not in tekli_calisan:
-        await event.respond("Etiketleme İşlemi Durduruldu!")
-        return
-      if usrnum == 1:
-        await client.send_message(event.chat_id, usrtxt, reply_to=msg)
-        await asyncio.sleep(2)
+        async for usr in client.iter_participants(event.chat_id):
+            usrnum += 1
+            usrtxt += f"⤇ **[{usr.first_name}](tg://user?id={usr.id})\n**"
+            if event.chat_id not in tekli_calisan:
+                await event.respond("Etiketleme İşlemi Durduruldu!")
+                return
+            if usrnum == 1:
+                await client.send_message(event.chat_id, f" ⤇ {usrtxt}\n\n→ **{usrnum} Kullanıcı Etiketlendi**\n→ **Başlatan**: {event.sender_id}\n\n{msg}")
+                await asyncio.sleep(2)
+                usrnum = 0
+                usrtxt = ""
+
+    if mode == "text_on_reply":
+        tekli_calisan.append(event.chat_id)
+
         usrnum = 0
         usrtxt = ""
+        async for usr in client.iter_participants(event.chat_id):
+            usrnum += 1
+            usrtxt += f"[{usr.first_name}](tg://user?id={usr.id})\n"
+            if event.chat_id not in tekli_calisan:
+                await event.respond("Etiketleme İşlemi Durduruldu!")
+                return
+            if usrnum == 1:
+                await client.send_message(event.chat_id, usrtxt, reply_to=msg)
+                await asyncio.sleep(2)
+                usrnum = 0
+                usrtxt = ""
 
 @client.on(events.NewMessage(pattern='^(?i)/cancel'))
 async def cancel(event):
-  global tekli_calisan
-  tekli_calisan.remove(event.chat_id)
-	
+    global tekli_calisan
+    chat_id = event.chat_id
+    canceled_chat = None
+    if chat_id in tekli_calisan:
+        canceled_chat = chat_id
+        tekli_calisan.remove(chat_id)
+
+    if canceled_chat:
+        total_tagged_users = 0  # Etiketlenen kullanıcı sayısını hesaplayın
+        canceled_by_user = event.sender_id  # Etiketlemeyi durduran kullanıcının ID'si
+        canceled_by_user_info = await client.get_entity(canceled_by_user)
+        canceled_by_username = canceled_by_user_info.username if canceled_by_user_info.username else f"{canceled_by_user_info.first_name} {canceled_by_user_info.last_name}"
+        await event.respond(f"📣**Etiketleme İşlemi Başarıyla Durduruldu!**\n\n→ **Etiketlenen Kullanıcı Sayısı**: {total_tagged_users}\n→ **Başlatan**: {event.sender_id}\n→ **Durduran Kullanıcı**: {canceled_by_username}")
+    else:
+        await event.respond("Henüz etiketleme işlemi başlatılmamış!")
+
+
+
 
 @client.on(events.NewMessage(pattern="^/yetki ?(.*)"))
 async def mention_admins(tagadmin):
@@ -658,7 +671,7 @@ async def mention_admins(tagadmin):
         a_ += 5
         username = f"@{i.username}" if i.username else f"[{i.first_name}](tg://user?id={i.id})"
         await tagadmin.client.send_message(tagadmin.chat_id, f"⤇ {username} {seasons}")
-        sleep(1.0)
+        sleep(2.0)
 
 
 restarting = False  # Botun yeniden başlatılıp başlatılmadığını kontrol etmek için bir bayrak
@@ -760,7 +773,7 @@ from telethon import Button
 async def grup_info(event):
     # Sadece grup ve kanallarda çalıştır
     if event.is_private:
-        await event.respond("Bu komut yalnızca grup ve kanallarda kullanılabilir.")
+        await event.respond("Bu komut yalnızca grup ve kanallarda kullanılabilir!")
         return
 
     user = await event.get_sender()
@@ -803,9 +816,9 @@ async def grup_info(event):
     # Özel durumları kontrol et
     special_status = ""
     if deleted_count > 0:
-        special_status += f'➻ Delete Hesap: {deleted_count}\n'
+        special_status += f'→ Delete Hesap: {deleted_count}\n'
     if bot_count > 0:
-        special_status += f'➻ Bot Sayısı: {bot_count}\n'
+        special_status += f'→ Bot Sayısı: {bot_count}\n'
 
     # Özel durumlar olmadığında "Bulunamadı" mesajı ver
     if not special_status:
@@ -818,10 +831,10 @@ async def grup_info(event):
     owner_button = Button.url('🛡ᴏᴡɴᴇʀ🛡', f"https://t.me/{owner}")
 
     response_text = (
-        f'➻ Grup Adı: {group_name}\n'
-        f'➻ Grup ID: {group_id}\n'
-        f'➻ Aktif Kullanıcıları: {active_count}\n'
-        f'➻ Grup Üye Sayısı: {total_count}\n'
+        f'→ Grup Adı: {group_name}\n'
+        f'→ Grup ID: {group_id}\n'
+        f'→ Aktif Kullanıcıları: {active_count}\n'
+        f'→ Grup Üye Sayısı: {total_count}\n'
         f'{special_status}'
     )
 
