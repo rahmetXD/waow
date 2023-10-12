@@ -150,12 +150,19 @@ async def mentionall(event):
     anlik_calisan.append(event.chat_id)
     usrnum = 0
     usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
-      usrnum += 1
+     async for usr in client.iter_participants(event.chat_id):
+            if usr.bot or getattr(usr, 'deleted', False):
+                continue  # Botları ve silinmiş hesapları atla
+            usrnum += 1
       usrtxt += f"[{random.choice(bayrak)}](tg://user?id={usr.id}) "
       if event.chat_id not in anlik_calisan:
-        await event.respond("İşlem Başarıyla Durduruldu!")
-        return
+       await event.respond(
+                    "📣 Etiketleme İşlemi Durduruldu!",
+                    buttons=[
+                        [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
+                    ]
+                )
+                return
       if usrnum == 5:
         await client.send_message(event.chat_id, f"{usrtxt}\n\n{msg}")
         await asyncio.sleep(2)
@@ -197,11 +204,18 @@ async def mentionall(event):
     usrnum = 0
     usrtxt = ""
     async for usr in client.iter_participants(event.chat_id):
-      usrnum += 1
+            if usr.bot or getattr(usr, 'deleted', False):
+                continue  # Botları ve silinmiş hesapları atla
+            usrnum += 1
       usrtxt += f"[{random.choice(emoji)}](tg://user?id={usr.id}) "
       if event.chat_id not in anlik_calisan:
-       await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
-       return
+       await event.respond(
+                    "📣 Etiketleme İşlemi Durduruldu!",
+                    buttons=[
+                        [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
+                    ]
+                )
+                return
       if usrnum == 5:
         await client.send_message(event.chat_id, f"{usrtxt}\n\n{msg}")
         await asyncio.sleep(2)
@@ -215,18 +229,23 @@ async def mentionall(event):
     usrnum = 0
     usrtxt = ""
     async for usr in client.iter_participants(event.chat_id):
-      usrnum += 1
+            if usr.bot or getattr(usr, 'deleted', False):
+                continue  # Botları ve silinmiş hesapları atla
+            usrnum += 1
       usrtxt += f"[{random.choice(emoji)}](tg://user?id={usr.id}) "
       if event.chat_id not in anlik_calisan:
-        await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
-        return
+        await event.respond(
+                    "📣 Etiketleme İşlemi Durduruldu!",
+                    buttons=[
+                        [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
+                    ]
+                )
+                return
       if usrnum == 5:
         await client.send_message(event.chat_id, usrtxt, reply_to=msg)
         await asyncio.sleep(2)
         usrnum = 0
         usrtxt = ""
-
-import random
 
 @client.on(events.NewMessage(pattern="/dtag"))
 async def start_tagging(event):
@@ -240,41 +259,133 @@ async def start_tagging(event):
 
         # Eğer kullanıcı grup adminlerinden biriyse devam edin
         if user in admins:
-            await asyncio.sleep(5)  # 5 saniye bekle
-            await event.respond(f"Etiketleme Başarıyla Başladı!\n\nBaşlatan: {user.username}\nGrup ID: {event.chat_id}")
-            
             # Hedeflenen gruptaki son aktif olan 50 kişiyi alın
             group_entity = event.chat_id
             participants = await client.get_participants(group_entity, limit=50)
 
             if participants:
-                questions = [
-         "Nerdesin?",
-        "Napiyorsun?",
-        "Nasılsın?",
-        "Bugün hava nasıl?",
-        "Son film tavsiyen nedir?",
-        "Hafta sonu planın var mı?",
-        "Hangi kitabı okuyorsun?",
-        "En sevdiğin yemek nedir?",
-        "En son seyahat ettiğin yer neresiydi?",
-        "Hobilerin nelerdir?",
-        "En sevdiğin mevsim nedir?",
-        "Hangi sporu seversin?",
-        "En son izlediğin konser hangisiydi?",
-        "Hayat felsefen nedir?",
-        "En sevdiğin tatil yeri neresi?",
-        "Son okuduğun kitap neydi?",
-        "En sevdiğin dizi/film nedir?",
-        "Hafta içi en sevdiğin gün hangisi?",
-        "En sevdiğin renk nedir?",
-        "En sevdiğin müzik türü nedir?",
-        "Gelecekle ilgili bir hayalin var mı?",
-        "En sevdiğin çiçek nedir?",
-        "Hangi ülkeyi ziyaret etmek istersin?",
-        "En sevdiğin spor takımı hangisi?",
-        "Hayatta gerçekleştirmek istediğin bir hedefin var mı?"
-                ]
+               questions = [
+    "Nerdesin?",
+    "Napiyorsun?",
+    "Nasılsın?",
+    "Bugün hava nasıl?",
+    "Son film tavsiyen nedir?",
+    "Hafta sonu planın var mı?",
+    "Hangi kitabı okuyorsun?",
+    "En sevdiğin yemek nedir?",
+    "En son seyahat ettiğin yer neresiydi?",
+    "Hobilerin nelerdir?",
+    "En sevdiğin mevsim nedir?",
+    "Hangi sporu seversin?",
+    "En son izlediğin konser hangisiydi?",
+    "Hayat felsefen nedir?",
+    "En sevdiğin tatil yeri neresi?",
+    "Son okuduğun kitap neydi?",
+    "En sevdiğin dizi/film nedir?",
+    "Hafta içi en sevdiğin gün hangisi?",
+    "En sevdiğin renk nedir?",
+    "En sevdiğin müzik türü nedir?",
+    "Gelecekle ilgili bir hayalin var mı?",
+    "En sevdiğin çiçek nedir?",
+    "Hangi ülkeyi ziyaret etmek istersin?",
+    "En sevdiğin spor takımı hangisi?",
+    "Hayatta gerçekleştirmek istediğin bir hedefin var mı?",
+    "En sevdiğin meyve nedir?",
+    "Son kez gittiğin restoran neresiydi?",
+    "En son izlediğin TV programı neydi?",
+    "En çok korktuğun şey nedir?",
+    "En sevdiğin müzik enstrümanı nedir?",
+    "En son hangi oyunu oynadın?",
+    "En çok takip ettiğin spor dalı hangisi?",
+    "Hayatta yapmak istediğin seyahat nedir?",
+    "En sevdiğin hayvan nedir?",
+    "En son ne zaman güldün?",
+    "Hayatındaki en büyük başarı nedir?",
+    "Son zamanlarda izlediğin en iyi film nedir?",
+    "İlgi alanlarınız nelerdir?",
+    "Dünya turu yapma fırsatın olsa, hangi ülkeleri ziyaret ederdin?",
+    "En sevdiğin tarihi dönem nedir?",
+    "En iyi arkadaşınla yaptığın en eğlenceli şey nedir?",
+    "Sana ilham veren kişi kimdir?",
+    "Hayatında dönüm noktası niteliğinde bir anı paylaşır mısın?",
+    "En sevdiğin kış sporu nedir?",
+    "Bir süper gücün olsaydı, ne olmasını isterdin?",
+    "En sevdiğin çizgi film karakteri kim?",
+    "En sevdiğin sanat eseri nedir?",
+    "En son katıldığın etkinlik nedir?",
+    "En sevdiğin klasik film hangisi?",
+    "Bir gün yapmayı hayal ettiğin şey nedir?",
+    "En sevdiğin takım veya takımlar hangileri?",
+    "En güzel çocukluk anını paylaşır mısın?",
+    "En sevdiğin sezon nedir?",
+    "Geçmişteki en büyük ders nedir?",
+    "Hayatındaki en büyük hayal nedir?",
+    "En sevdiğin restoran nedir?",
+    "Hangi tarihi kişiyi tanıma fırsatını isterdin?",
+    "En sevdiğin televizyon dizisi hangisi?",
+    "En çok gurur duyduğun şey nedir?",
+    "En son hangi yemeği yaptın?",
+    "En sevdiğin kahve türü nedir?",
+    "En son ne zaman seyahat ettin?",
+    "Hayatındaki en büyük hayal kırıklığı nedir?",
+    "Hangi müziği dinlerken en çok huzur bulursun?",
+    "Gelecekte yapmayı düşündüğün tatil nedir?",
+    "En sevdiğin tatil anısı nedir?",
+    "Son zamanlarda keşfettiğin yeni bir hobi nedir?",
+    "En son gittiğin konser veya etkinlik hangisiydi?",
+    "En iyi arkadaşının seninle paylaştığı en güzel anı nedir?",
+    "Hangi filmi defalarca izledin?",
+    "Hayatında değiştirmeyi düşündüğün bir şey var mı?",
+    "En sevdiğin çizgi roman karakteri kim?",
+    "Hangi sporu yapmayı en çok seversin?",
+    "Hayatta yapmak istediğin en cesurca şey nedir?",
+    "Hangi ünlüyle tanışma fırsatın olsa, kim olurdu?",
+    "Hangi ünlüyle tanışmak en çok heyecanlandırır seni?",
+    "En sevdiğin meyve suyu nedir?",
+    "En sevdiğin pizza malzemesi nedir?",
+    "En iyi tatlı nedir?",
+    "Hangi yiyeceği en çok seversin?",
+    "Hangi çeşit müziği dinlemeyi en çok seversin?",
+    "En sevdiğin meyve nedir?",
+    "En sevdiğin spor dalı nedir?",
+    "Gelecekte yaşamak istediğin bir yer var mı?",
+    "Hangi dil veya enstrümanı öğrenmek isterdin?",
+    "En sevdiğin şehir nedir?",
+    "En sevdiğin manzara nedir?",
+    "En sevdiğin deniz ürünü nedir?",
+    "En sevdiğin çikolata çeşidi nedir?",
+    "En son kez gittiğin tatil yeri neresiydi?",
+    "En çok kullandığın uygulama nedir?",
+    "En sevdiğin tatil etkinliği nedir?",
+    "En güzel günün hangisiydi?",
+    "Hangi tarihi karakterle sohbet etmek isterdin?",
+    "En son hangi restoranda yemek yedin?",
+    "Hangi yerel yemeği denemek istersin?",
+    "En sevdiğin tatil aktivitesi nedir?",
+    "Hangi tatil hatıran en özel?",
+    "En sevdiğin yiyecek veya içecek nedir?",
+    "En sevdiğin kış aktivitesi nedir?",
+    "Hangi çiçeği en çok seversin?",
+    "En son izlediğin konser hangisiydi?",
+    "Hangi hayvanı evcil olarak beslemek istersin?",
+    "Hangi dönemde yaşamayı isterdin?",
+    "Hangi hobiye sahip olmak isterdin?",
+    "En sevdiğin festivale gitmek ister misin?",
+    "En sevdiğin dönem filmleri hangileri?",
+    "Hangi tarihi olaya tanıklık etmek isterdin?",
+    "En sevdiğin çocukluk oyunu nedir?",
+    "Hangi sanat eserini incelemek isterdin?",
+    "Hangi ülkeyi ziyaret etmek istersin?",
+    "En sevdiğin tarih dönemi nedir?",
+    "Hangi tarihi figürü tanımak isterdin?",
+    "En sevdiğin radyo istasyonu nedir?",
+    "Hangi klasik eseri okumak isterdin?",
+    "En sevdiğin film yönetmeni kim?",
+    "Hangi ünlüyle bir gün geçirmek isterdin?",
+    "En iyi arkadaşının seninle paylaştığı en güzel anı nedir?",
+    "En sevdiğin seyahat destinasyonu nedir?"
+]
+
 
                 # Katılımcıları rastgele sırayla karıştırın
                 random.shuffle(participants)
@@ -285,13 +396,22 @@ async def start_tagging(event):
                             question = random.choice(questions)  # Rastgele bir soru seçin
                             tagged_message = f"⤇ @{username}, {question}"
                             await event.respond(tagged_message)
-                            await asyncio.sleep(2)
+                            await asyncio.sleep(2)  # 2 saniye bekle
                             questions.remove(question)  # Aynı soruyu birden fazla kişiye sormamak için kaldırın
         else:
             await event.respond("Bu komutu kullanabilmek için bir grup admini olmalısınız!")
     else:
         await event.respond("Bu komut yalnızca gruplar ve kanallarda kullanılabilir!")
 
+@client.on(events.NewMessage(pattern="/cancel"))
+async def cancel_tagging(event):
+    # Etiketleme işlemini iptal et
+    await event.respond(
+        "Etiketleme İşlemi İptal Edildi!",
+        buttons=[
+            [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
+        ]
+    )
 
 
 @client.on(events.NewMessage(pattern="^/ctag ?(.*)"))
@@ -323,14 +443,21 @@ async def mentionall(event):
     anlik_calisan.append(event.chat_id)
     usrnum = 0
     usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
-      usrnum += 1
+     async for usr in client.iter_participants(event.chat_id):
+            if usr.bot or getattr(usr, 'deleted', False):
+                continue  # Botları ve silinmiş hesapları atla
+            usrnum += 1
       usrtxt += f"[{random.choice(cumle)}](tg://user?id={usr.id}) "
       if event.chat_id not in anlik_calisan:
-       await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
-       return
+          await event.respond(
+                    "📣 Etiketleme İşlemi Durduruldu!",
+                    buttons=[
+                        [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
+                    ]
+                )
+                return
       if usrnum == 1:
-        await client.send_message(event.chat_id, f"{usrtxt} {msg}")
+        await client.send_message(event.chat_id, f"⤇ {usrtxt}, {msg}")
         await asyncio.sleep(2)
         usrnum = 0
         usrtxt = ""
@@ -341,12 +468,19 @@ async def mentionall(event):
  
     usrnum = 0
     usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
+     async for usr in client.iter_participants(event.chat_id):
+            if usr.bot or getattr(usr, 'deleted', False):
+                continue  # Botları ve silinmiş hesapları atla
       usrnum += 1
       usrtxt += f"[{random.choice(cumle)}](tg://user?id={usr.id}) "
       if event.chat_id not in anlik_calisan:
-        await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
-        return
+        await event.respond(
+                    "📣 Etiketleme İşlemi Durduruldu!",
+                    buttons=[
+                        [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
+                    ]
+                )
+                return
       if usrnum == 1:
         await client.send_message(event.chat_id, usrtxt, reply_to=msg)
         await asyncio.sleep(2)
@@ -382,14 +516,21 @@ async def mentionall(event):
     anlik_calisan.append(event.chat_id)
     usrnum = 0
     usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
+     async for usr in client.iter_participants(event.chat_id):
+            if usr.bot or getattr(usr, 'deleted', False):
+                continue  # Botları ve silinmiş hesapları atla
       usrnum += 1
       usrtxt += f"[{random.choice(soru)}](tg://user?id={usr.id}) "
       if event.chat_id not in anlik_calisan:
-       await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
-       return
+       await event.respond(
+                    "📣 Etiketleme İşlemi Durduruldu!",
+                    buttons=[
+                        [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
+                    ]
+                )
+                return
       if usrnum == 1:
-        await client.send_message(event.chat_id, f"{usrtxt} {msg}")
+        await client.send_message(event.chat_id, f"⤇ {usrtxt}, {msg}")
         await asyncio.sleep(2)
         usrnum = 0
         usrtxt = ""
@@ -400,12 +541,19 @@ async def mentionall(event):
  
     usrnum = 0
     usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
+     async for usr in client.iter_participants(event.chat_id):
+            if usr.bot or getattr(usr, 'deleted', False):
+                continue  # Botları ve silinmiş hesapları atla
       usrnum += 1
       usrtxt += f"[{random.choice(soru)}](tg://user?id={usr.id}) "
       if event.chat_id not in anlik_calisan:
-        await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
-        return
+        await event.respond(
+                    "📣 Etiketleme İşlemi Durduruldu!",
+                    buttons=[
+                        [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
+                    ]
+                )
+                return
       if usrnum == 1:
         await client.send_message(event.chat_id, usrtxt, reply_to=msg)
         await asyncio.sleep(2)
@@ -441,14 +589,21 @@ async def mentionall(event):
     anlik_calisan.append(event.chat_id)
     usrnum = 0
     usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
+     async for usr in client.iter_participants(event.chat_id):
+            if usr.bot or getattr(usr, 'deleted', False):
+                continue  # Botları ve silinmiş hesapları atla
       usrnum += 1
-      usrtxt += f"⤇ - [{usr.first_name}](tg://user?id={usr.id}) \n"
+      usrtxt += f"🔮- [{usr.first_name}](tg://user?id={usr.id}) \n"
       if event.chat_id not in anlik_calisan:
-        await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
-        return
+     await event.respond(
+                    "📣 Etiketleme İşlemi Durduruldu!",
+                    buttons=[
+                        [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
+                    ]
+                )
+                return
       if usrnum == 5:
-        await client.send_message(event.chat_id, f"{usrtxt}\n\n**{msg}**")
+        await client.send_message(event.chat_id, f"{msg}\n\n**{usrtxt}**")
         await asyncio.sleep(2)
         usrnum = 0
         usrtxt = ""
@@ -459,12 +614,19 @@ async def mentionall(event):
  
     usrnum = 0
     usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
+     async for usr in client.iter_participants(event.chat_id):
+            if usr.bot or getattr(usr, 'deleted', False):
+                continue  # Botları ve silinmiş hesapları atla
       usrnum += 1
       usrtxt += f"⤇ - [{usr.first_name}](tg://user?id={usr.id}) \n"
       if event.chat_id not in anlik_calisan:
-        await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
-        return
+        await event.respond(
+                    "📣 Etiketleme İşlemi Durduruldu!",
+                    buttons=[
+                        [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
+                    ]
+                )
+                return
       if usrnum == 5:
         await client.send_message(event.chat_id, usrtxt, reply_to=msg)
         await asyncio.sleep(2)
