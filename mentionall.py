@@ -587,43 +587,30 @@ async def mentionall(event):
     anlik_calisan.append(event.chat_id)
     usrnum = 0
     usrtxt = ""
-     async for usr in client.iter_participants(event.chat_id):
-            if usr.bot or getattr(usr, 'deleted', False):
-                continue  # Botları ve silinmiş hesapları atla
+    async for usr in client.iter_participants(event.chat_id):
       usrnum += 1
-      usrtxt += f"🔮- [{usr.first_name}](tg://user?id={usr.id}) \n"
+      usrtxt += f"⤇ [{usr.first_name}](tg://user?id={usr.id}) \n"
       if event.chat_id not in anlik_calisan:
-     await event.respond(
-                    "📣 Etiketleme İşlemi Durduruldu!",
-                    buttons=[
-                        [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
-                    ]
-                )
-                return
+        await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
+        return
       if usrnum == 5:
-        await client.send_message(event.chat_id, f"{msg}\n\n**{usrtxt}**")
+        await client.send_message(event.chat_id, f"{usrtxt}\n\n**{msg}**")
         await asyncio.sleep(2)
         usrnum = 0
         usrtxt = ""
         
   
-    if mode == "text_on_cmd":
+  if mode == "text_on_reply":
     anlik_calisan.append(event.chat_id)
+ 
     usrnum = 0
     usrtxt = ""
-     async for usr in client.iter_participants(event.chat_id):
-            if usr.bot or getattr(usr, 'deleted', False):
-                continue  # Botları ve silinmiş hesapları atla
+    async for usr in client.iter_participants(event.chat_id):
       usrnum += 1
-      usrtxt += f"⤇ - [{usr.first_name}](tg://user?id={usr.id}) \n"
+      usrtxt += f"⤇ [{usr.first_name}](tg://user?id={usr.id}) \n"
       if event.chat_id not in anlik_calisan:
-        await event.respond(
-                    "📣 Etiketleme İşlemi Durduruldu!",
-                    buttons=[
-                        [Button.url('🛡ᴏᴡɴᴇʀ🛡', 'https://t.me/rahmetiNC')]
-                    ]
-                )
-                return
+        await event.respond("Etiketleme İşlemi Başarıyla Durduruldu!")
+        return
       if usrnum == 5:
         await client.send_message(event.chat_id, usrtxt, reply_to=msg)
         await asyncio.sleep(2)
