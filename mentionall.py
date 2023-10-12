@@ -1034,3 +1034,4 @@ async def calculate_zodiac_sign(event):
 
 print("Ahri Tagger AKtif, Sağol Sahip! @rahmetiNC ✨")
 client.run_until_disconnected()
+
