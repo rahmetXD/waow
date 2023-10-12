@@ -151,9 +151,7 @@ async def mentionall(event):
     usrnum = 0
     usrtxt = ""
      async for usr in client.iter_participants(event.chat_id):
-            if usr.bot or getattr(usr, 'deleted', False):
-                continue  # Botları ve silinmiş hesapları atla
-            usrnum += 1
+      usrnum += 1
       usrtxt += f"[{random.choice(bayrak)}](tg://user?id={usr.id}) "
       if event.chat_id not in anlik_calisan:
        await event.respond(
